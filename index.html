@@ -281,10 +281,15 @@
   .kinfo > div { background: var(--surface-2); border-radius: 16px; padding: 14px 16px; display: grid; gap: 4px; align-content: start; }
   .kinfo b { color: var(--accent); font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; }
   .kinfo p { font-size: 0.98rem; }
-  .kpick { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-  .kpick button { font: inherit; font-weight: 700; font-size: 0.9rem; cursor: pointer; padding: 8px 14px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); color: var(--fg); min-height: 40px; transition: transform .2s, border-color .2s; }
-  .kpick button:hover { transform: translateY(-2px); border-color: var(--accent); }
-  .kpick button[aria-current="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .kmenu { position: relative; }
+  .kmbtn { width: 100%; justify-content: space-between; text-align: left; }
+  .kmbtn svg { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; }
+  .kmbtn[aria-expanded="true"] svg { transform: rotate(180deg); }
+  .kpick { margin-top: 8px; max-height: min(55vh, 380px); overflow-y: auto; border: 1.5px solid var(--line); border-radius: 16px; background: var(--surface); padding: 6px; box-shadow: 0 14px 34px rgba(20,17,28,0.16); overscroll-behavior: contain; }
+  .kpick[hidden] { display: none; }
+  .kpick button { display: block; width: 100%; text-align: left; font: inherit; font-weight: 600; font-size: 0.98rem; cursor: pointer; padding: 11px 14px; border-radius: 10px; border: 0; background: transparent; color: var(--fg); min-height: 44px; }
+  .kpick button:hover, .kpick button:focus-visible { background: var(--surface-2); }
+  .kpick button[aria-current="true"] { background: var(--accent); color: #fff; }
   .kpick button.visto::after { content: " ✓"; }
   html[data-theme="dark"] .kpick button[aria-current="true"] { color: #14111C; }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .kpick button[aria-current="true"] { color: #14111C; } }
@@ -779,9 +784,9 @@
           <a class="btn wa small" id="kShare" href="https://wa.me/" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#wa"/></svg>Compartir por WhatsApp</a>
         </div>
         <div class="field kvoz" id="kVozBox" hidden><label for="kVoz">Voz para escuchar (elige la que suene más natural)</label><select id="kVoz"></select></div>
-        <div>
-          <p class="hint">Todas las historias (✓ = ya la viste):</p>
-          <div class="kpick" id="kPick"></div>
+        <div class="kmenu">
+          <button class="btn alt kmbtn" id="kMenuBtn" type="button" aria-expanded="false" aria-controls="kPick"><span id="kMenuTxt">Elegir otra historia</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+          <div class="kpick" id="kPick" hidden role="listbox" aria-label="Historias (✓ = ya la viste)"></div>
         </div>
       </div>
     </div>
@@ -1828,7 +1833,7 @@
     function abrir(i, desdeUsuario) {
       parar(); cur = i; esc = 0; var h = HIST[i], d = new Date();
       $("kBadge").textContent = i === hoy() ? "Historia de hoy · " + d.toLocaleDateString("es-CO", { weekday: "long", day: "numeric", month: "long" }) : "Historia " + (i + 1) + " de " + HIST.length;
-      $("kTitle").textContent = h.t; $("kRef").textContent = "Está en la Biblia: " + h.ref;
+      $("kMenuTxt").textContent = "Historia " + (i + 1) + " de " + HIST.length + " · Elegir otra"; $("kTitle").textContent = h.t; $("kRef").textContent = "Está en la Biblia: " + h.ref;
       $("kLes").textContent = h.les; $("kPre").textContent = h.pre; $("kOra").textContent = h.ora;
       $("kShare").href = "https://wa.me/?text=" + encodeURIComponent("📖 Historia bíblica para niños: " + h.t + " (" + h.ref + ")\nCon dibujos, para leer en familia:\nhttps://mirefugioencristo.com/#ninos\n\nMi Refugio · Ganando almas para Cristo");
       var dots = $("kDots"); dots.innerHTML = "";
@@ -1837,7 +1842,11 @@
       if (desdeUsuario) { var c = $("kBadge"); if (c.scrollIntoView) c.scrollIntoView({ behavior: "smooth", block: "center" }); }
     }
     var pk = $("kPick");
-    HIST.forEach(function (h, i) { var b = document.createElement("button"); b.type = "button"; b.textContent = (i + 1) + ". " + h.t; b.addEventListener("click", function () { abrir(i, true); }); pk.appendChild(b); });
+    function menu(abrir2) { pk.hidden = !abrir2; $("kMenuBtn").setAttribute("aria-expanded", abrir2 ? "true" : "false"); if (abrir2) { var c = pk.querySelector('[aria-current="true"]'); if (c) pk.scrollTop = Math.max(0, c.offsetTop - 60); } }
+    $("kMenuBtn").addEventListener("click", function () { menu(pk.hidden); });
+    document.addEventListener("click", function (e) { if (!pk.hidden && !e.target.closest(".kmenu")) menu(false); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !pk.hidden) { menu(false); $("kMenuBtn").focus(); } });
+    HIST.forEach(function (h, i) { var b = document.createElement("button"); b.type = "button"; b.textContent = (i + 1) + ". " + h.t; b.setAttribute("role", "option"); b.addEventListener("click", function () { menu(false); abrir(i, true); }); pk.appendChild(b); });
     $("kPrev").addEventListener("click", function () { if (esc > 0) { parar(); esc--; pintar(); } });
     $("kNext").addEventListener("click", function () { if (esc < HIST[cur].es.length - 1) { parar(); esc++; pintar(); } });
     $("kBible").addEventListener("click", function () {
