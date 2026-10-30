@@ -289,6 +289,7 @@
   html[data-theme="dark"] .kpick button[aria-current="true"] { color: #14111C; }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .kpick button[aria-current="true"] { color: #14111C; } }
   .kact .btn { width: auto; }
+  .kvoz { max-width: 460px; }
   @media (max-width: 520px) { .kact .btn { flex: 1 1 100%; } .kn { width: 42px; height: 42px; } }
 
   /* Lector de la Biblia */
@@ -773,10 +774,11 @@
           <div><b>Oración corta</b><p id="kOra"></p></div>
         </div>
         <div class="row kact">
-          <button class="btn small" id="kListen" type="button">🔊 Escuchar la historia</button>
+          <button class="btn small" id="kListen" type="button">🔊 Escuchar y ver la historia</button>
           <button class="btn alt small" id="kBible" type="button">Leer en la Biblia (NTV)</button>
           <a class="btn wa small" id="kShare" href="https://wa.me/" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#wa"/></svg>Compartir por WhatsApp</a>
         </div>
+        <div class="field kvoz" id="kVozBox" hidden><label for="kVoz">Voz para escuchar (elige la que suene más natural)</label><select id="kVoz"></select></div>
         <div>
           <p class="hint">Todas las historias (✓ = ya la viste):</p>
           <div class="kpick" id="kPick"></div>
@@ -1812,7 +1814,8 @@
     var store2 = { get: function (k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }, set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
     var vistos = store2.get("refugio-ninos") || [];
     function hoy() { var d = new Date(); return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5) % HIST.length; }
-    function parar() { try { window.speechSynthesis.cancel(); } catch (e) {} hablando = false; $("kListen").textContent = "🔊 Escuchar la historia"; }
+    var narr = 0, etiqueta = "🔊 Escuchar y ver la historia";
+    function parar() { narr++; try { window.speechSynthesis.cancel(); } catch (e) {} hablando = false; $("kListen").textContent = etiqueta; }
     function pintar() {
       var h = HIST[cur], e = h.es[esc];
       $("kSvg").innerHTML = dibujar(e); $("kSvg").setAttribute("aria-label", "Dibujo " + (esc + 1) + " de " + h.es.length + ": " + h.t);
@@ -1841,14 +1844,66 @@
       var h = HIST[cur], ntv = vbox.querySelector('input[value="NTV"]'); if (ntv) ntv.checked = true;
       sel.value = String(h.lb); fillCaps(h.cap); fillDesde(""); paintBiblia(); $("bRead").click();
     });
-    $("kListen").addEventListener("click", function () {
-      if (!("speechSynthesis" in window)) { $("kListen").textContent = "Tu dispositivo no puede leer en voz alta"; return; }
-      if (hablando) { parar(); return; }
-      var h = HIST[cur], txt = h.t + ". " + h.es.map(function (x) { return x.tx; }).join(" ") + " Lo que aprendemos: " + h.les;
-      var u = new SpeechSynthesisUtterance(txt); u.lang = "es-419"; u.rate = 0.92;
-      u.onend = u.onerror = function () { hablando = false; $("kListen").textContent = "🔊 Escuchar la historia"; };
-      hablando = true; $("kListen").textContent = "⏹ Detener"; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
-    });
+    /* Voz: elige la más natural disponible y narra escena por escena */
+    var TTS = "speechSynthesis" in window;
+    function puntaje(v) {
+      var n = v.name + " " + (v.voiceURI || ""), p = 0;
+      if (/(natural|neural|online|premium|enhanced|mejorada|wavenet)/i.test(n)) p += 60;
+      if (/google/i.test(n)) p += 30;
+      if (/microsoft/i.test(n)) p += 20;
+      if (/(paulina|m[oó]nica|marisol|luc[ií]a|sabina|helena|laura|dalia|elvira|salome|paloma|jorge|diego|alvaro|[oó]scar|siri|angelica|francisca)/i.test(n)) p += 15;
+      if (/es[-_](co|mx|us|419)/i.test(v.lang)) p += 10;
+      if (/(eddy|reed|grandma|grandpa|rocko|flo|shelley|sandy|bad news|bells|boing|bubbles|cellos|zarvox|trinoids|whisper|wobble|organ|superstar|jester|junior|ralph|fred|albert|kathy)/i.test(n)) p -= 100;
+      if (v.localService === false) p += 5;
+      return p;
+    }
+    function vocesEs() { try { return window.speechSynthesis.getVoices().filter(function (v) { return /^es/i.test(v.lang); }).sort(function (a, b) { return puntaje(b) - puntaje(a); }); } catch (e) { return []; } }
+    function poblarVoces() {
+      var vs = vocesEs(), sl = $("kVoz"), guardada = store2.get("refugio-voz") || "";
+      sl.innerHTML = ""; var o0 = document.createElement("option"); o0.value = ""; o0.textContent = "Automática (la mejor disponible)"; sl.appendChild(o0);
+      vs.forEach(function (v) { var o = document.createElement("option"); o.value = v.name; o.textContent = v.name + " · " + v.lang; sl.appendChild(o); });
+      sl.value = guardada; if (sl.value !== guardada) sl.value = "";
+      $("kVozBox").hidden = vs.length < 2;
+    }
+    function vozActual() { var vs = vocesEs(), n = $("kVoz").value; for (var i = 0; i < vs.length; i++) if (vs[i].name === n) return vs[i]; return vs[0] || null; }
+    if (TTS) { poblarVoces(); try { window.speechSynthesis.onvoiceschanged = poblarVoces; } catch (e) {} }
+    $("kVoz").addEventListener("change", function () { store2.set("refugio-voz", $("kVoz").value); if (hablando) { var e0 = esc; parar(); esc = e0; empezar(); } });
+    function trozos(t) { return t.match(/[^.!?…]+[.!?…»]*\s*/g) || [t]; }
+    function hablar(txt, token, fin) {
+      if (token !== narr) return;
+      if (!TTS) { setTimeout(function () { if (token === narr) fin(); }, txt.length * 65 + 1500); return; }
+      var cola = trozos(txt), v = vozActual();
+      (function sig() {
+        if (token !== narr) return;
+        var c = cola.shift(); if (!c) { fin(); return; }
+        c = c.replace(/[«»]/g, "").trim(); if (!c) { sig(); return; }
+        var u = new SpeechSynthesisUtterance(c), hecho = false, tm;
+        if (v) { u.voice = v; u.lang = v.lang; } else u.lang = "es-419";
+        u.rate = 0.88; u.pitch = 1.04;
+        function ok() { if (hecho) return; hecho = true; clearTimeout(tm); if (token === narr) setTimeout(sig, 260); }
+        u.onend = ok; u.onerror = ok;
+        tm = setTimeout(function () { if (!hecho) { try { window.speechSynthesis.cancel(); } catch (e) {} ok(); } }, Math.max(5000, c.length * 170));
+        window.speechSynthesis.speak(u);
+      })();
+    }
+    function terminar() { hablando = false; $("kListen").textContent = etiqueta; }
+    function escena(token) {
+      if (token !== narr) return;
+      var h = HIST[cur];
+      hablar(h.es[esc].tx, token, function () {
+        if (token !== narr) return;
+        if (esc < h.es.length - 1) { setTimeout(function () { if (token !== narr) return; esc++; pintar(); escena(token); }, 700); }
+        else hablar("Lo que aprendemos. " + h.les, token, terminar);
+      });
+    }
+    function empezar() {
+      var h = HIST[cur], token = ++narr;
+      try { window.speechSynthesis.cancel(); } catch (e) {}
+      hablando = true; $("kListen").textContent = "⏹ Detener";
+      if (esc >= h.es.length - 1) { esc = 0; pintar(); }
+      if (esc === 0) hablar(h.t + ".", token, function () { escena(token); }); else escena(token);
+    }
+    $("kListen").addEventListener("click", function () { if (hablando) { parar(); return; } empezar(); });
     window.addEventListener("pagehide", parar);
     abrir(hoy(), false);
   })();
