@@ -344,6 +344,9 @@
   }
   textarea { resize: vertical; min-height: 120px; }
   .fgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 12px; }
+  .solo { margin-top: 12px; }
+  .solo-links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .solo-links a { display: inline-block; border: 2px solid var(--line); border-radius: 999px; padding: 7px 14px; font-weight: 700; font-size: 0.9rem; text-decoration: none; color: inherit; background: var(--bg); }
   .vers { display: flex; flex-wrap: wrap; gap: 8px; border: 0; padding: 0; margin: 0; min-width: 0; }
   .vers label { cursor: pointer; position: relative; }
   .vers input { position: absolute; opacity: 0; pointer-events: none; }
@@ -598,7 +601,7 @@
       <div class="sec-head">
         <p class="eyebrow">Biblia y estudio</p>
         <h2>Compara versiones y estudia la Palabra</h2>
-        <p>Elige un pasaje y hasta cuatro versiones. Se abre una vista en paralelo en BibleGateway, para que leas el mismo texto con distintas traducciones.</p>
+        <p>Elige un pasaje y las versiones que quieras. En computador o tablet puedes ver hasta cuatro en paralelo; en el celular, hasta dos lado a lado, o todas una por una. Se abre en BibleGateway.</p>
       </div>
       <div class="two">
         <div class="panel">
@@ -610,6 +613,7 @@
           </div>
           <fieldset class="vers" id="bVers" aria-label="Versiones de la Biblia"></fieldset>
           <p class="hint" id="bInfo"></p>
+          <div class="solo" id="bSolo" hidden><p class="hint">Leer cada versión por separado (se lee mejor en el celular):</p><div class="solo-links" id="bSoloLinks"></div></div>
           <div class="row"><a class="btn" id="bGo" href="https://www.biblegateway.com/" target="_blank" rel="noopener">Comparar versiones</a></div>
         </div>
         <div class="panel">
@@ -951,7 +955,9 @@
     var o = document.createElement("option"); o.value = String(i); o.textContent = l[0]; sel.lastChild.appendChild(o);
   });
   sel.value = "42"; /* Juan */
-  var vbox = $("bVers"), MAXV = 4;
+  var vbox = $("bVers"), mq = window.matchMedia ? window.matchMedia("(max-width: 700px)") : { matches: false };
+  function maxV() { return mq.matches ? 2 : 4; }
+  if (mq.addEventListener) mq.addEventListener("change", function () { paintBiblia(); });
   VERSIONES.forEach(function (v) {
     var lb = document.createElement("label"); var inp = document.createElement("input"); inp.type = "checkbox"; inp.value = v[0];
     inp.checked = v[0] === "RVR1960" || v[0] === "NVI";
@@ -961,15 +967,21 @@
   });
   function paintBiblia() {
     var checked = Array.prototype.filter.call(vbox.querySelectorAll("input"), function (i) { return i.checked; });
-    Array.prototype.forEach.call(vbox.querySelectorAll("input"), function (i) { i.disabled = !i.checked && checked.length >= MAXV; });
+    Array.prototype.forEach.call(vbox.querySelectorAll("input"), function (i) { i.disabled = !i.checked && checked.length >= maxV(); });
     var libro = LIBROS[Number(sel.value)], cap = parseInt($("bCap").value, 10), ver = $("bVer").value.replace(/\s+/g, "");
+    if (checked.length > maxV()) { for (var k = checked.length - 1; k >= maxV(); k--) checked[k].checked = false; checked = checked.slice(0, maxV()); Array.prototype.forEach.call(vbox.querySelectorAll("input"), function (i) { i.disabled = !i.checked && checked.length >= maxV(); }); }
     var ok = checked.length > 0 && cap > 0;
     var go = $("bGo");
     if (!ok) { go.removeAttribute("href"); go.setAttribute("aria-disabled", "true"); $("bInfo").textContent = "Elige un capítulo y al menos una versión."; return; }
     var pasaje = libro[1] + " " + cap + (ver ? ":" + ver : "");
     go.href = "https://www.biblegateway.com/passage/?search=" + encodeURIComponent(pasaje) + "&version=" + checked.map(function (i) { return i.value; }).join(";");
     go.removeAttribute("aria-disabled");
-    $("bInfo").textContent = "Pasaje: " + libro[0] + " " + cap + (ver ? ":" + ver : "") + " · " + checked.length + " de " + MAXV + " versiones posibles.";
+    $("bInfo").textContent = "Pasaje: " + libro[0] + " " + cap + (ver ? ":" + ver : "") + " · " + checked.length + " de " + maxV() + " versiones posibles en paralelo.";
+    var solo = $("bSolo"), links = $("bSoloLinks"); links.innerHTML = "";
+    if (checked.length > 1) {
+      checked.forEach(function (i) { var a = document.createElement("a"); a.target = "_blank"; a.rel = "noopener"; a.textContent = i.value === "RVA-2015" ? "RVA 2015" : i.value; a.href = "https://www.biblegateway.com/passage/?search=" + encodeURIComponent(pasaje) + "&version=" + i.value; links.appendChild(a); });
+      solo.hidden = false;
+    } else solo.hidden = true;
   }
   ["change", "input"].forEach(function (ev) { sel.addEventListener(ev, paintBiblia); $("bCap").addEventListener(ev, paintBiblia); $("bVer").addEventListener(ev, paintBiblia); });
   paintBiblia();
