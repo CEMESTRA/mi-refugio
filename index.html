@@ -668,7 +668,6 @@
         <div class="vnav">
           <button class="btn alt small" id="vPrev" type="button">← Ayer</button>
           <button class="btn alt small" id="vHoy" type="button">Hoy</button>
-          <button class="btn alt small" id="vNext" type="button">Mañana →</button>
           <button class="btn small" id="vCopy" type="button">Copiar</button>
           <a class="btn wa small" id="vShare" href="https://wa.me/" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#wa"/></svg>Compartir por WhatsApp</a>
         </div>
@@ -1145,7 +1144,6 @@
     $("vToast").textContent = "";
   }
   $("vPrev").addEventListener("click", function () { off--; showVerse(); });
-  $("vNext").addEventListener("click", function () { off++; showVerse(); });
   $("vHoy").addEventListener("click", function () { off = 0; showVerse(); });
   $("vCopy").addEventListener("click", function () { copyText("“" + cur[2] + "” " + cur[1] + " (RVR1960)", $("vToast"), "Versículo copiado."); });
   showVerse();
