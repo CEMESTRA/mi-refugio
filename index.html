@@ -1140,16 +1140,17 @@
   var BASES = ["https://rest.api.bible/v1", "https://rest.api.bible", "https://api.scripture.api.bible/v1"], baseOk = null, rToken = 0;
   var USFM = ["GEN","EXO","LEV","NUM","DEU","JOS","JDG","RUT","1SA","2SA","1KI","2KI","1CH","2CH","EZR","NEH","EST","JOB","PSA","PRO","ECC","SNG","ISA","JER","LAM","EZK","DAN","HOS","JOL","AMO","OBA","JON","MIC","NAM","HAB","ZEP","HAG","ZEC","MAL","MAT","MRK","LUK","JHN","ACT","ROM","1CO","2CO","GAL","EPH","PHP","COL","1TH","2TH","1TI","2TI","TIT","PHM","HEB","JAS","1PE","2PE","1JN","2JN","3JN","JUD","REV"];
   function apiGet(path) {
-    var lista = baseOk ? [baseOk] : BASES, i = 0;
+    var lista = baseOk ? [baseOk] : BASES, i = 0, intentos = [];
     function sig() {
-      if (i >= lista.length) return Promise.reject(new Error("red"));
+      if (i >= lista.length) { var er = new Error("red"); er.detalle = intentos.join(" | "); return Promise.reject(er); }
       var b = lista[i++];
       return fetch(b + path, { headers: { "api-key": NTV.key } }).then(function (r) {
-        if (r.status === 429) throw new Error("limite");
-        if (r.status === 401 || r.status === 403) throw new Error("auth");
+        intentos.push(b.replace("https://", "") + " -> " + r.status);
+        if (r.status === 429) { var e1 = new Error("limite"); e1.detalle = intentos.join(" | "); throw e1; }
+        if (r.status === 401 || r.status === 403) { var e2 = new Error("auth"); e2.detalle = intentos.join(" | "); throw e2; }
         if (!r.ok) return sig();
         baseOk = b; return r.json();
-      }, function () { return sig(); });
+      }, function (err) { intentos.push(b.replace("https://", "") + " -> sin respuesta (" + (err && err.message ? err.message : "red") + ")"); return sig(); });
     }
     return sig();
   }
@@ -1176,7 +1177,7 @@
     return apiGet("/bibles/" + NTV.id + "/chapters/" + USFM[idx] + "." + cap + q).then(function (r) {
       var d = r && r.data ? r.data : {}, m = r && r.meta ? r.meta : {};
       var obj = { t: Date.now(), p: parsear(d.content), c: d.copyright || "", f: m.fumsToken || m.fumsId || "" };
-      if (!obj.p.orden.length && !obj.p.crudo) throw new Error("vacio");
+      if (!obj.p.orden.length && !obj.p.crudo) { var ev = new Error("vacio"); ev.detalle = "respuesta sin texto; claves: " + Object.keys(d).join(","); throw ev; }
       try { localStorage.setItem(clave, JSON.stringify(obj)); } catch (e) {}
       return obj;
     });
@@ -1189,8 +1190,9 @@
     $("rPrev").disabled = idx === 0 && cap === 1;
     $("rNext").disabled = idx === 65 && cap === VCOUNT[65].length;
     $("rNote").textContent = "";
-    function msg(t, bg) {
+    function msg(t, bg, det) {
       body.innerHTML = ""; var m = document.createElement("p"); m.className = "reader-msg"; m.textContent = t; body.appendChild(m);
+      if (det) { var dt = document.createElement("p"); dt.className = "hint"; dt.textContent = "Código técnico: " + det; body.appendChild(dt); }
       if (bg) { var a = document.createElement("a"); a.className = "btn alt small"; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Abrir en BibleGateway"; a.href = "https://www.biblegateway.com/passage/?search=" + encodeURIComponent(LIBROS[idx][1] + " " + cap + (d ? ":" + d + (h > d ? "-" + h : "") : "")) + "&version=NTV"; body.appendChild(a); }
     }
     if (!ntvOn) { msg("Marca la NTV para leer aquí."); return; }
@@ -1215,8 +1217,9 @@
     }).catch(function (e) {
       if (token !== rToken) return;
       var t = e && e.message === "limite" ? "Hoy se alcanzó el límite de lecturas de la NTV en esta página. Puedes leerla en BibleGateway." :
+              e && e.message === "auth" ? "El servicio de la NTV no aceptó la conexión de esta página por ahora. Puedes leerla en BibleGateway." :
               "No se pudo cargar la NTV en este momento. Revisa tu conexión o ábrela en BibleGateway.";
-      msg(t, true);
+      msg(t, true, (e && e.message ? e.message : "?") + (e && e.detalle ? " · " + e.detalle : ""));
     });
   }
   $("bRead").addEventListener("click", function () {
