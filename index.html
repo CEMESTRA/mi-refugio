@@ -852,7 +852,10 @@
           <datalist id="cLista"></datalist>
           <button class="btn" type="submit">Buscar versículos</button>
         </form>
-        <div><p class="hint">Temas frecuentes:</p><div class="cchips" id="cChips"></div></div>
+        <div class="kmenu">
+          <button class="btn alt kmbtn" id="cMenuBtn" type="button" aria-expanded="false" aria-controls="cMenuList"><span>Temas frecuentes</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+          <div class="kpick" id="cMenuList" hidden role="listbox" aria-label="Temas frecuentes"></div>
+        </div>
         <div id="cRes" class="cres" aria-live="polite"></div>
       </div>
     </div>
@@ -1623,7 +1626,6 @@
       T("fracaso,fracasar,fallar,equivocacion,segunda oportunidad,empezar de nuevo,nuevo comienzo", "Segundas oportunidades", "Con Dios siempre se puede volver a empezar.", "Lm 3:22-23; Is 43:18-19; 2Co 5:17; Fil 3:13-14; Mi 7:8; Pr 24:16; Sal 37:23-24"),
       T("lujuria,pureza,sexo,pornografia,castidad,noviazgo,tentacion sexual", "Pureza y noviazgo", "Dios cuida nuestro corazón y nuestras relaciones.", "Sal 119:9-11; 1Co 6:18-20; 1Ts 4:3-5; Pr 4:23; Mt 5:8; 2Ti 2:22; Cnt 8:4")
     ];
-    var FREC = ["ansiedad", "miedo", "perdón", "esperanza", "tristeza", "paz", "fortaleza", "fe", "familia", "soledad", "propósito", "protección"];
     var esc = function (s) { return s; };
     function buscar(q) {
       var nq = norm(q), words = nq.split(" ").filter(function (w) { return w.length >= 4; }), res = [];
@@ -1728,8 +1730,16 @@
       if (m.length) mostrarTema(m[0], m.slice(1, 4)); else sinTema(q);
       var r = $("cRes"); if (r.scrollIntoView) r.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
-    var chips = $("cChips"), dl = $("cLista");
-    FREC.forEach(function (n) { var b = document.createElement("button"); b.type = "button"; b.textContent = n.charAt(0).toUpperCase() + n.slice(1); b.addEventListener("click", function () { $("cQ").value = n; consultar(n); }); chips.appendChild(b); });
+    var dl = $("cLista"), ml = $("cMenuList");
+    function menuC(ab) { ml.hidden = !ab; $("cMenuBtn").setAttribute("aria-expanded", ab ? "true" : "false"); }
+    $("cMenuBtn").addEventListener("click", function () { menuC(ml.hidden); });
+    document.addEventListener("click", function (e) { if (!ml.hidden && !e.target.closest("#cMenuBtn, #cMenuList")) menuC(false); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !ml.hidden) { menuC(false); $("cMenuBtn").focus(); } });
+    TEMAS.slice().sort(function (a, b) { return a.t.localeCompare(b.t, "es"); }).forEach(function (t) {
+      var b = document.createElement("button"); b.type = "button"; b.textContent = t.t; b.setAttribute("role", "option");
+      b.addEventListener("click", function () { menuC(false); $("cQ").value = t.t; mostrarTema(t, buscar(t.t).filter(function (y) { return y !== t; }).slice(0, 3)); var r = $("cRes"); if (r.scrollIntoView) r.scrollIntoView({ behavior: "smooth", block: "nearest" }); });
+      ml.appendChild(b);
+    });
     TEMAS.forEach(function (t) { var o = document.createElement("option"); o.value = t.t; dl.appendChild(o); });
     $("cForm").addEventListener("submit", function (e) { e.preventDefault(); consultar($("cQ").value); try { $("cQ").blur(); } catch (x) {} });
   })();
