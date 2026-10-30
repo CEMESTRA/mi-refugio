@@ -1,0 +1,5 @@
+Textos de dominio público incluidos en esta carpeta:
+- rv1909: La Santa Biblia, Reina-Valera 1909 (dominio público).
+- kjv: King James Version (dominio público).
+Un archivo por libro, en el orden estándar de 66 libros (00 = Génesis ... 65 = Apocalipsis).
+Formato: lista de capítulos, cada capítulo es una lista de versículos.
