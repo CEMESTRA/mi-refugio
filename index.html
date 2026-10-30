@@ -260,6 +260,37 @@
 
 
 
+  /* Rincón de los niños */
+  .kids { background: linear-gradient(180deg, var(--surface-2), var(--bg)); }
+  .kcard { gap: 16px; }
+  .khead { display: grid; gap: 6px; }
+  .kbadge { justify-self: start; background: var(--accent); color: #fff; font-weight: 800; font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; }
+  html[data-theme="dark"] .kbadge { color: #14111C; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .kbadge { color: #14111C; } }
+  .kfig { position: relative; border-radius: 22px; overflow: hidden; border: 3px solid var(--accent); background: var(--surface-2); aspect-ratio: 5 / 3; }
+  .kfig svg { display: block; width: 100%; height: 100%; }
+  .kn { position: absolute; top: 50%; transform: translateY(-50%); width: 48px; height: 48px; border-radius: 50%; border: 0; cursor: pointer; font-size: 2rem; line-height: 1; background: rgba(20,17,28,0.72); color: #fff; display: grid; place-items: center; padding: 0 0 4px; transition: transform .2s, background .2s; }
+  .kn:hover { background: var(--accent); transform: translateY(-50%) scale(1.08); }
+  .kn:disabled { opacity: 0.25; cursor: default; transform: translateY(-50%); }
+  .kn.prev { left: 10px; } .kn.next { right: 10px; }
+  .kdots { display: flex; gap: 10px; justify-content: center; }
+  .kdots button { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; cursor: pointer; padding: 0; }
+  .kdots button[aria-current="true"] { background: var(--accent); transform: scale(1.2); }
+  .ktext { font-size: clamp(1.15rem, 3.4vw, 1.4rem); line-height: 1.55; max-width: 60ch; min-height: 5.5em; font-family: var(--font-body); }
+  .kinfo { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 12px; }
+  .kinfo > div { background: var(--surface-2); border-radius: 16px; padding: 14px 16px; display: grid; gap: 4px; align-content: start; }
+  .kinfo b { color: var(--accent); font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .kinfo p { font-size: 0.98rem; }
+  .kpick { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .kpick button { font: inherit; font-weight: 700; font-size: 0.9rem; cursor: pointer; padding: 8px 14px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); color: var(--fg); min-height: 40px; transition: transform .2s, border-color .2s; }
+  .kpick button:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .kpick button[aria-current="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .kpick button.visto::after { content: " ✓"; }
+  html[data-theme="dark"] .kpick button[aria-current="true"] { color: #14111C; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .kpick button[aria-current="true"] { color: #14111C; } }
+  .kact .btn { width: auto; }
+  @media (max-width: 520px) { .kact .btn { flex: 1 1 100%; } .kn { width: 42px; height: 42px; } }
+
   /* Lector de la Biblia */
   .vers label.main span { border-color: var(--accent); }
   .vers label.aqui span::after { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: 0.7; margin-left: 8px; vertical-align: middle; }
@@ -563,6 +594,7 @@
       <a href="#camino">Conocer a Jesús</a>
       <a href="#restaura">Volver</a>
       <a href="#jovenes">Jóvenes</a>
+      <a href="#ninos">Niños</a>
       <a href="#biblia">Biblia</a>
       <a href="#testimonios">Testimonios</a>
       <a href="#oracion">Oración</a>
@@ -710,6 +742,45 @@
         <div class="meter" role="progressbar" aria-label="Progreso del reto" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0" id="retoMeter"><i id="retoBar"></i></div>
         <p id="retoTxt" style="font-weight:700"></p>
         <div class="checks" id="retoList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NIÑOS -->
+  <section id="ninos" class="sec kids">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Rincón de los niños</p>
+        <h2>Una historia bíblica cada día</h2>
+        <p>Cada día hay una historia nueva con dibujos. Léanla juntos, escúchenla o compártanla con otra familia. ¿Quieres otra? Elígela abajo.</p>
+      </div>
+      <div class="panel kcard">
+        <div class="khead">
+          <span class="kbadge" id="kBadge">Historia de hoy</span>
+          <h3 id="kTitle"></h3>
+          <p class="hint" id="kRef"></p>
+        </div>
+        <div class="kfig">
+          <svg id="kSvg" viewBox="0 0 400 240" role="img" aria-label=""></svg>
+          <button class="kn prev" id="kPrev" type="button" aria-label="Dibujo anterior">‹</button>
+          <button class="kn next" id="kNext" type="button" aria-label="Dibujo siguiente">›</button>
+        </div>
+        <div class="kdots" id="kDots" role="group" aria-label="Dibujos de la historia"></div>
+        <p class="ktext" id="kText" aria-live="polite"></p>
+        <div class="kinfo">
+          <div><b>Lo que aprendemos</b><p id="kLes"></p></div>
+          <div><b>Para conversar</b><p id="kPre"></p></div>
+          <div><b>Oración corta</b><p id="kOra"></p></div>
+        </div>
+        <div class="row kact">
+          <button class="btn small" id="kListen" type="button">🔊 Escuchar la historia</button>
+          <button class="btn alt small" id="kBible" type="button">Leer en la Biblia (NTV)</button>
+          <a class="btn wa small" id="kShare" href="https://wa.me/" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#wa"/></svg>Compartir por WhatsApp</a>
+        </div>
+        <div>
+          <p class="hint">Todas las historias (✓ = ya la viste):</p>
+          <div class="kpick" id="kPick"></div>
+        </div>
       </div>
     </div>
   </section>
@@ -863,6 +934,7 @@
   <a href="#versiculo"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg>Versículo del día</a>
   <a href="#restaura"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v4h4"/></svg>Volver a Dios</a>
   <a href="#jovenes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m13 3-8 11h6l-1 7 8-11h-6z"/></svg>Jóvenes</a>
+  <a href="#ninos"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="9" cy="10.5" r=".8"/><circle cx="15" cy="10.5" r=".8"/><path d="M8.5 14.5q3.5 3 7 0"/></svg>Niños</a>
   <a href="#testimonios"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v10H10l-5 4z"/></svg>Testimonios</a>
 </div>
 
@@ -1442,6 +1514,230 @@
     l.appendChild(c); l.appendChild(a); $("planList").appendChild(l);
   })(d);
   paintPlan();
+
+  /* ====== Rincón de los niños: historia bíblica diaria con dibujos ====== */
+  (function () {
+    var SK = ["#f2c9a0", "#d9a577", "#a9744a", "#7a4e2d"];
+    function G(x, y, s, inner) { return '<g transform="translate(' + x + " " + y + ") scale(" + s + ')">' + inner + "</g>"; }
+    var RAYS = ""; for (var i = 0; i < 8; i++) { var a = i * Math.PI / 4; RAYS += '<line x1="' + (Math.cos(a) * 32).toFixed(1) + '" y1="' + (Math.sin(a) * 32).toFixed(1) + '" x2="' + (Math.cos(a) * 42).toFixed(1) + '" y2="' + (Math.sin(a) * 42).toFixed(1) + '"/>'; }
+    var RAIN = ""; for (var j = 0; j < 46; j++) { var rx = (j * 53) % 410, ry = (j * 97) % 230; RAIN += '<line x1="' + rx + '" y1="' + ry + '" x2="' + (rx - 7) + '" y2="' + (ry + 16) + '"/>'; }
+    var P = {
+      sun: function () { return '<circle r="60" fill="#ffd54a" opacity=".22"/><g stroke="#ffd54a" stroke-width="5" stroke-linecap="round">' + RAYS + '</g><circle r="26" fill="#ffd54a"/>'; },
+      moon: function () { return '<path d="M0-24a24 24 0 1 0 16 42A20 20 0 0 1 0-24z" fill="#fff3c4"/>'; },
+      star: function () { return '<polygon points="0,-9 2.6,-3 9,-2.8 4,1.8 5.6,8 0,4.6 -5.6,8 -4,1.8 -9,-2.8 -2.6,-3" fill="#ffe27a"/>'; },
+      bigstar: function () { return '<circle r="46" fill="#ffe27a" opacity=".25"/><circle r="30" fill="#ffe27a" opacity=".3"/><polygon points="0,-24 7,-8 24,-7 11,4 15,21 0,12 -15,21 -11,4 -24,-7 -7,-8" fill="#ffe27a"/>'; },
+      cloud: function () { return '<g fill="#fff" opacity=".95"><circle cx="-18" cy="4" r="14"/><circle cx="0" cy="-4" r="18"/><circle cx="20" cy="4" r="14"/><rect x="-32" y="4" width="64" height="14" rx="7"/></g>'; },
+      hill: function (a) { return '<ellipse rx="130" ry="46" fill="' + (a || "#58a865") + '"/>'; },
+      mount: function () { return '<polygon points="-100,0 0,-100 100,0" fill="#8a7fb8"/><polygon points="-22,-78 0,-100 22,-78 8,-70 0,-76 -10,-68" fill="#fff"/>'; },
+      tree: function () { return '<rect x="-5" y="-30" width="10" height="30" fill="#8b5a2b"/><circle cy="-48" r="26" fill="#3f9d57"/><circle cx="-16" cy="-38" r="16" fill="#4caf63"/><circle cx="16" cy="-40" r="16" fill="#4caf63"/>'; },
+      palm: function () { return '<path d="M0 0 Q6-35 -2-70" stroke="#8b5a2b" stroke-width="9" fill="none" stroke-linecap="round"/><g fill="#3f9d57"><path d="M-2-70 Q-35-80 -50-62 Q-22-72 -2-70z"/><path d="M-2-70 Q30-82 50-62 Q22-72 -2-70z"/><path d="M-2-70 Q-20-98 -42-96 Q-20-88 -2-70z"/><path d="M-2-70 Q16-98 40-96 Q18-88 -2-70z"/></g>'; },
+      wave: function () { return '<path d="M-44 0q11-14 22 0t22 0t22 0t22 0" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".9"/>'; },
+      rain: function () { return '<g stroke="#d7e8ff" stroke-width="2" opacity=".7">' + RAIN + "</g>"; },
+      ark: function () { return '<path d="M-72 0 L-56 26 H56 L72 0Z" fill="#8b5a2b"/><rect x="-42" y="-30" width="84" height="30" fill="#b9814a"/><polygon points="-52,-30 0,-58 52,-30" fill="#7a4a22"/><circle cx="-20" cy="-14" r="6" fill="#ffe9b0"/><circle cx="0" cy="-14" r="6" fill="#ffe9b0"/><circle cx="20" cy="-14" r="6" fill="#ffe9b0"/>'; },
+      boat: function () { return '<path d="M-48 0 L-36 22 H36 L48 0Z" fill="#8b5a2b"/><line x1="0" y1="0" x2="0" y2="-66" stroke="#6d4a2a" stroke-width="4"/><polygon points="4,-62 4,-8 34,-8" fill="#fff"/>'; },
+      sheep: function () { return '<g fill="#3b3340"><rect x="-14" y="6" width="5" height="12" rx="2"/><rect x="8" y="6" width="5" height="12" rx="2"/></g><g fill="#fff"><circle cx="-12" cy="-4" r="11"/><circle cx="2" cy="-9" r="13"/><circle cx="14" cy="-3" r="11"/><circle cx="0" cy="3" r="12"/></g><ellipse cx="-19" cy="-6" rx="8" ry="9" fill="#3b3340"/><circle cx="-21" cy="-8" r="1.6" fill="#fff"/>'; },
+      lion: function () { return '<g fill="#e8b25a"><rect x="-26" y="4" width="8" height="16" rx="3"/><rect x="14" y="4" width="8" height="16" rx="3"/><ellipse cx="0" cy="-2" rx="30" ry="16"/></g><path d="M28 -2 Q42 -4 40 -18" stroke="#e8b25a" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="-26" cy="-8" r="19" fill="#c97a22"/><circle cx="-26" cy="-8" r="12" fill="#f3c570"/><circle cx="-30" cy="-11" r="2" fill="#2b2433"/><circle cx="-22" cy="-11" r="2" fill="#2b2433"/><path d="M-30-4q4 4 8 0" stroke="#2b2433" stroke-width="2" fill="none"/>'; },
+      fish: function () { return '<polygon points="46,0 78,-24 78,24" fill="#4a73b8"/><ellipse rx="58" ry="32" fill="#5b86c9"/><ellipse cy="12" rx="48" ry="16" fill="#9ec0ee"/><circle cx="-34" cy="-8" r="6" fill="#fff"/><circle cx="-35" cy="-8" r="3" fill="#2b2433"/><path d="M-52 8q10 10 22 2" stroke="#2b2433" stroke-width="3" fill="none" stroke-linecap="round"/>'; },
+      dove: function () { return '<ellipse rx="18" ry="11" fill="#fff"/><circle cx="-16" cy="-8" r="8" fill="#fff"/><path d="M-24-8l-8 3 8 2z" fill="#f59e0b"/><circle cx="-18" cy="-10" r="1.6" fill="#2b2433"/><path d="M-2-6 Q10-30 26-24 Q16-12 8-4z" fill="#e8eefc"/><path d="M16 2l16 6-16 0z" fill="#e8eefc"/><path d="M-30-3q-10 4-16 0" stroke="#3f9d57" stroke-width="3" fill="none"/><ellipse cx="-38" cy="-3" rx="4" ry="2.4" fill="#3f9d57"/>'; },
+      rainbow: function () { var c = ["#ef5350", "#ffa726", "#ffee58", "#66bb6a", "#42a5f5", "#8e6bd8"], o = ""; c.forEach(function (k, n) { var r = 100 - n * 9; o += '<path d="M' + -r + " 0A" + r + " " + r + " 0 0 1 " + r + ' 0" stroke="' + k + '" stroke-width="9" fill="none"/>'; }); return o; },
+      tent: function () { return '<polygon points="-46,0 0,-50 46,0" fill="#d9b38c"/><polygon points="-10,0 0,-26 10,0" fill="#7a5a3a"/>'; },
+      house: function () { return '<rect x="-44" y="-44" width="88" height="44" fill="#e9d3b0"/><polygon points="-52,-44 0,-76 52,-44" fill="#b9693d"/><rect x="-9" y="-26" width="18" height="26" fill="#7a5a3a"/><rect x="-34" y="-34" width="14" height="14" fill="#9ec0ee"/><rect x="20" y="-34" width="14" height="14" fill="#9ec0ee"/>'; },
+      pyramid: function () { return '<polygon points="-70,0 0,-80 70,0" fill="#e2b45f"/><polygon points="0,-80 70,0 8,0" fill="#c9983e"/>'; },
+      parted: function () { return '<rect x="-210" y="-130" width="150" height="130" fill="#2f78c4"/><rect x="60" y="-130" width="150" height="130" fill="#2f78c4"/><path d="M-210 -130h150v14q-12 -12 -25 0t-25 0t-25 0t-25 0z" fill="#5aa0e6"/><path d="M60 -130h150v14q-12 -12 -25 0t-25 0t-25 0t-25 0z" fill="#5aa0e6"/><g stroke="#9ec9f2" stroke-width="3" opacity=".6"><line x1="-100" y1="-90" x2="-100" y2="-10"/><line x1="100" y1="-90" x2="100" y2="-10"/></g>'; },
+      tomb: function (open) { return '<path d="M-78 0 Q-68 -80 0 -80 Q68 -80 78 0Z" fill="#9e9aa8"/><path d="M-24 0 V-30 a24 24 0 0 1 48 0 V0Z" fill="#2b2433"/>' + (open ? '<ellipse cx="58" cy="-14" rx="22" ry="20" fill="#bdb8c9"/>' : '<circle cy="-24" r="25" fill="#bdb8c9"/><path d="M-12-34q8-6 16 2" stroke="#9e9aa8" stroke-width="3" fill="none"/>'); },
+      manger: function () { return '<circle cy="-30" r="62" fill="#ffe27a" opacity=".4"/><polygon points="-44,0 -32,-24 32,-24 44,0" fill="#a1724a"/><rect x="-34" y="-30" width="68" height="8" rx="4" fill="#e2b45f"/><ellipse cx="2" cy="-32" rx="22" ry="9" fill="#fff"/><circle cx="-14" cy="-34" r="8" fill="#f2c9a0"/><circle cx="-16" cy="-35" r="1.3" fill="#2b2433"/><circle cx="-11" cy="-35" r="1.3" fill="#2b2433"/>'; },
+      basket: function () { return '<ellipse cy="-4" rx="22" ry="10" fill="#c58b4f"/><ellipse cx="-9" cy="-12" rx="9" ry="6" fill="#e9b872"/><ellipse cx="8" cy="-12" rx="9" ry="6" fill="#e9b872"/><ellipse cx="0" cy="-15" rx="8" ry="5" fill="#f0c98e"/><path d="M-22 -4 Q0 16 22 -4" fill="#a8703a"/>'; },
+      heart: function () { return '<path d="M0 12C-20-2-14-18 0-8 14-18 20-2 0 12z" fill="#ef5b7b"/>'; },
+      coin: function () { return '<circle r="9" fill="#f5c542" stroke="#d99a1e" stroke-width="2"/><circle r="4.5" fill="none" stroke="#d99a1e" stroke-width="1.5"/>'; },
+      lamp: function () { return '<circle r="22" fill="#ffe27a" opacity=".35"/><rect x="-6" y="-6" width="12" height="14" rx="3" fill="#8b5a2b"/><circle cy="-10" r="6" fill="#ffd54a"/>'; },
+      angel: function () { return '<circle cy="-50" r="26" fill="#ffe27a" opacity=".3"/><ellipse cx="-24" cy="-30" rx="16" ry="26" fill="#fff" opacity=".92" transform="rotate(20 -24 -30)"/><ellipse cx="24" cy="-30" rx="16" ry="26" fill="#fff" opacity=".92" transform="rotate(-20 24 -30)"/><path d="M-14 0 L-10 -38 H10 L14 0Z" fill="#fff"/><circle cy="-48" r="10" fill="#f2c9a0"/><ellipse cy="-62" rx="10" ry="3" fill="none" stroke="#ffd54a" stroke-width="3"/><circle cx="-3.5" cy="-49" r="1.3" fill="#2b2433"/><circle cx="3.5" cy="-49" r="1.3" fill="#2b2433"/><path d="M-4-44q4 3 8 0" stroke="#2b2433" stroke-width="1.4" fill="none"/>'; },
+      person: function (robe, sk, o) {
+        o = o || ""; var skin = SK[sk || 0], fill = robe === "multi" ? "url(#gMulti)" : robe, arms;
+        if (o.indexOf("u") > -1) arms = '<path d="M-9 -34 L-20 -58 M9 -34 L20 -58" stroke="' + skin + '" stroke-width="5" stroke-linecap="round"/>';
+        else arms = '<path d="M-10 -34 L-15 -14 M10 -34 L15 -14" stroke="' + skin + '" stroke-width="5" stroke-linecap="round"/>';
+        var s = '<ellipse cy="1" rx="16" ry="3" fill="#000" opacity=".12"/><path d="M-15 0 L-10 -38 H10 L15 0Z" fill="' + fill + '"/>' + arms;
+        if (o.indexOf("s") > -1) s += '<line x1="22" y1="2" x2="22" y2="-62" stroke="#7a4a22" stroke-width="4" stroke-linecap="round"/>';
+        s += '<circle cy="-48" r="10" fill="' + skin + '"/>';
+        if (o.indexOf("h") > -1) s += '<path d="M-12 -46 a12 12 0 0 1 24 0 v4 l-4 -4 h-16 l-4 4z" fill="' + (robe === "#ffffff" ? "#cfc8e6" : robe) + '" opacity=".95"/>';
+        else if (o.indexOf("g") > -1) s += '<path d="M-11 -48 a11 11 0 0 1 22 0z" fill="#5c6670"/><line x1="26" y1="2" x2="26" y2="-70" stroke="#5c6670" stroke-width="3"/>';
+        else s += '<path d="M-10 -49 a10 10 0 0 1 20 0 q-10 -5 -20 0z" fill="#3a2a22"/>';
+        if (o.indexOf("c") > -1) s += '<polygon points="-9,-58 -9,-67 -4,-62 0,-69 4,-62 9,-67 9,-58" fill="#f5c542"/>';
+        if (o.indexOf("b") > -1) s += '<path d="M-8 -45 q8 16 16 0 q-8 6 -16 0z" fill="#3a2a22"/>';
+        s += '<circle cx="-3.5" cy="-48" r="1.4" fill="#2b2433"/><circle cx="3.5" cy="-48" r="1.4" fill="#2b2433"/>';
+        if (o.indexOf("b") < 0) s += '<path d="M-4 -43q4 3 8 0" stroke="#2b2433" stroke-width="1.4" fill="none" stroke-linecap="round"/>';
+        if (o.indexOf("l") > -1) return '<g transform="rotate(-90)">' + s + "</g>";
+        return s;
+      }
+    };
+    var BG = { day: ["#8fd3ff", "#eaf7ff"], night: ["#171238", "#4b3b93"], dusk: ["#f0866b", "#ffd9a8"], storm: ["#4b5568", "#9aa4b5"], dawn: ["#c9b6f5", "#ffe9c2"] };
+    function ground(g) {
+      if (g === "grass") return '<ellipse cx="90" cy="176" rx="150" ry="22" fill="#7bc47f"/><ellipse cx="330" cy="178" rx="150" ry="22" fill="#6ab872"/><rect y="176" width="400" height="64" fill="#5fae6a"/><rect y="214" width="400" height="26" fill="#4f9d5d"/>';
+      if (g === "sand") return '<rect y="176" width="400" height="64" fill="#ecd29b"/><rect y="214" width="400" height="26" fill="#dfc080"/>';
+      if (g === "water") return '<rect y="168" width="400" height="72" fill="#3f8fd2"/><rect y="210" width="400" height="30" fill="#2f78c4"/>';
+      return "";
+    }
+    function dibujar(sc) {
+      var b = BG[sc.bg] || BG.day, s = '<defs><linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + b[0] + '"/><stop offset="1" stop-color="' + b[1] + '"/></linearGradient><linearGradient id="gMulti" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ef5350"/><stop offset=".25" stop-color="#ef5350"/><stop offset=".25" stop-color="#ffca28"/><stop offset=".5" stop-color="#ffca28"/><stop offset=".5" stop-color="#42a5f5"/><stop offset=".75" stop-color="#42a5f5"/><stop offset=".75" stop-color="#66bb6a"/><stop offset="1" stop-color="#66bb6a"/></linearGradient></defs><rect width="400" height="240" fill="url(#gSky)"/>';
+      if (sc.bg === "night" || sc.bg === "dusk") s += '<g fill="#fff" opacity=".8"><circle cx="30" cy="26" r="1.5"/><circle cx="96" cy="50" r="1.2"/><circle cx="170" cy="20" r="1.5"/><circle cx="250" cy="40" r="1.2"/><circle cx="318" cy="22" r="1.6"/><circle cx="380" cy="64" r="1.2"/></g>';
+      s += ground(sc.gr);
+      sc.it.forEach(function (t) { var f = P[t[0]]; var inner = t[0] === "person" ? f(t[4], t[5], t[6]) : f(t[4]); s += G(t[1], t[2], t[3], inner); });
+      return s;
+    }
+    function ST(n, a, b, c) { return { t: n, a: a, b: b, c: c }; } // (no usado)
+    var R = "#ec407a", T = "#26a69a", M = "#7e57c2", V = "#66bb6a", W = "#ffffff", BR = "#8d6e63", IN = "#5c6bc0", OR = "#ef6c00", RD = "#ef5350";
+    var STARS = function (a) { return a.map(function (p) { return ["star", p[0], p[1], p[2] || 1]; }); };
+    var HIST = [
+      { t: "Dios crea el mundo", ref: "Génesis 1", lb: 0, cap: 1,
+        les: "Dios hizo todo y te hizo a ti con mucho amor.", pre: "¿Qué es lo que más te gusta de todo lo que Dios creó?", ora: "Gracias, Dios, por hacer el mundo y por hacerme a mí.",
+        es: [
+          { bg: "dusk", gr: "water", it: STARS([[40, 40], [120, 60, .8], [300, 50, 1.1], [360, 90, .8]]).concat([["sun", 200, 166, 1.8], ["wave", 90, 200, 1.4], ["wave", 310, 205, 1.4]]), tx: "Al principio todo estaba oscuro. Entonces Dios dijo: «¡Que haya luz!», y la luz apareció." },
+          { bg: "day", gr: "grass", it: [["sun", 60, 50, 1], ["cloud", 200, 52, 1], ["cloud", 320, 86, .8], ["hill", 90, 176, 1.1, "#58a865"], ["hill", 330, 178, 1.2, "#4f9d5d"], ["tree", 50, 206, 1.1], ["tree", 150, 212, .9], ["tree", 345, 208, 1.2]], tx: "Dios hizo el cielo, el mar, la tierra, los árboles, el sol, la luna y las estrellas. Y todo lo que hacía le parecía muy bueno." },
+          { bg: "day", gr: "grass", it: [["sun", 345, 46, .9], ["cloud", 110, 46, 1], ["rainbow", 200, 178, 1.7], ["tree", 40, 206, 1.1], ["sheep", 105, 218, 1], ["lion", 300, 218, 1], ["person", 190, 220, 1.2, M, 0], ["person", 238, 224, 1.05, T, 1]], tx: "Después Dios hizo a los animales y, al final, a las personas. Dios te hizo con mucho amor y te cuida todos los días." }
+        ] },
+      { t: "Noé y el arca", ref: "Génesis 6–9", lb: 0, cap: 6,
+        les: "Cuando obedecemos a Dios, él nos cuida. Y Dios siempre cumple sus promesas.", pre: "¿Cómo crees que se sintió Noé cuando vio el arcoíris?", ora: "Gracias, Dios, porque cumples tus promesas.",
+        es: [
+          { bg: "day", gr: "grass", it: [["cloud", 90, 46, 1], ["cloud", 310, 70, .8], ["tree", 40, 206, 1], ["tree", 365, 206, 1.1], ["ark", 215, 205, 1.3], ["person", 100, 220, 1.2, BR, 0, "sb"]], tx: "Noé era un hombre bueno que obedecía a Dios. Un día Dios le dijo: «Construye un barco muy grande». Y Noé lo construyó." },
+          { bg: "storm", gr: "water", it: [["rain", 0, 0, 1], ["ark", 200, 178, 1.2], ["wave", 90, 200, 1.6], ["wave", 310, 204, 1.7], ["wave", 200, 226, 1.5]], tx: "Entraron Noé, su familia y parejas de animales. Cayó mucha lluvia, pero el arca flotó segura. Dios los cuidaba." },
+          { bg: "dawn", gr: "water", it: [["sun", 340, 62, 1], ["rainbow", 200, 168, 1.9], ["ark", 200, 194, 1], ["dove", 95, 90, 1.2], ["wave", 80, 208, 1.4], ["wave", 320, 212, 1.5]], tx: "Cuando la lluvia paró, una paloma trajo una ramita. Dios puso un arcoíris en el cielo como promesa de que siempre cuidaría la tierra." }
+        ] },
+      { t: "Abraham y las estrellas", ref: "Génesis 15", lb: 0, cap: 15,
+        les: "Podemos confiar en Dios aunque su promesa tarde en llegar.", pre: "¿Qué es algo que esperas y le quieres pedir a Dios?", ora: "Dios, ayúdame a confiar en ti mientras espero.",
+        es: [
+          { bg: "dusk", gr: "sand", it: [["sun", 330, 158, 1], ["tent", 80, 206, 1.3], ["palm", 360, 212, 1], ["person", 190, 220, 1.2, "#6d4c41", 0, "sb"], ["person", 245, 222, 1.1, R, 1, "h"]], tx: "Abraham y su esposa Sara ya eran mayores y no tenían hijos. Pero Dios le prometió: «Tendrás una familia muy grande»." },
+          { bg: "night", gr: "sand", it: STARS([[30, 30], [80, 70, .8], [130, 30, 1.2], [180, 80], [230, 28, 1.1], [280, 66, .9], [330, 30, 1.2], [370, 80, .8], [60, 120, .8], [150, 120, 1], [250, 120, .9], [340, 125, 1]]).concat([["moon", 355, 30, .8], ["tent", 70, 208, 1.2], ["person", 200, 220, 1.3, "#6d4c41", 0, "sbu"]]), tx: "Una noche Dios lo llevó afuera: «Mira el cielo. Cuenta las estrellas, si puedes. ¡Así de grande será tu familia!»" },
+          { bg: "day", gr: "sand", it: [["sun", 60, 50, 1], ["heart", 200, 100, 1.5], ["tent", 335, 208, 1.2], ["person", 135, 220, 1.2, "#6d4c41", 0, "sb"], ["person", 195, 222, 1.1, R, 1, "h"], ["person", 245, 226, .55, "#ffd54a", 1]], tx: "Abraham le creyó a Dios, y Dios cumplió su promesa: les nació un hijo llamado Isaac. ¡Qué alegría tan grande!" }
+        ] },
+      { t: "José y su túnica de colores", ref: "Génesis 37; 45", lb: 0, cap: 37,
+        les: "Perdonar hace bien al corazón. Dios puede convertir lo malo en bien.", pre: "¿Alguna vez perdonaste a alguien? ¿Cómo te sentiste?", ora: "Jesús, enséñame a perdonar como tú perdonas.",
+        es: [
+          { bg: "day", gr: "grass", it: [["cloud", 200, 46, 1], ["tree", 45, 206, 1], ["person", 130, 220, 1.2, "multi", 1], ["person", 255, 220, 1.1, BR, 0, "b"], ["person", 320, 224, 1.1, IN, 0, "b"]], tx: "José tenía una túnica de colores que su papá le regaló. Sus hermanos sintieron envidia y lo vendieron como esclavo." },
+          { bg: "day", gr: "sand", it: [["sun", 60, 50, 1], ["pyramid", 290, 204, 1.4], ["pyramid", 360, 208, .9], ["palm", 60, 214, 1], ["person", 170, 220, 1.2, "multi", 1]], tx: "José llegó a Egipto, lejos de su casa. Aun en los momentos difíciles confió en Dios, y Dios estuvo con él." },
+          { bg: "day", gr: "grass", it: [["sun", 345, 50, 1], ["cloud", 90, 50, 1], ["heart", 198, 96, 1.6], ["tree", 40, 206, 1], ["person", 168, 220, 1.25, "multi", 1], ["person", 228, 220, 1.2, BR, 0, "b"]], tx: "Años después, sus hermanos llegaron pidiendo comida. José los reconoció, los perdonó y los abrazó. «Dios cambió lo malo en bien», les dijo." }
+        ] },
+      { t: "Moisés y el mar Rojo", ref: "Éxodo 14", lb: 1, cap: 14,
+        les: "Dios abre caminos cuando parece que no hay salida.", pre: "¿Qué cosa te da miedo? ¿Se la cuentas a Dios?", ora: "Dios, cuando tenga miedo, recuérdame que estás conmigo.",
+        es: [
+          { bg: "day", gr: "sand", it: [["cloud", 90, 50, 1], ["mount", 340, 178, 1], ["person", 150, 220, 1.25, BR, 0, "sb"], ["person", 225, 224, 1.1, T, 1, "h"], ["person", 275, 226, 1, IN, 0, "h"]], tx: "El pueblo de Dios caminaba hacia la libertad, pero llegaron al mar. Tenían miedo. Pero Moisés les dijo: «No tengan miedo. ¡Dios nos va a ayudar!»" },
+          { bg: "day", gr: "sand", it: [["parted", 200, 190, 1], ["sun", 200, 46, 1], ["person", 200, 222, 1.2, BR, 0, "sbu"]], tx: "Dios le dijo a Moisés: «Levanta tu vara». ¡El mar se abrió en dos y todos pasaron por en medio, por tierra seca!" },
+          { bg: "day", gr: "sand", it: [["sun", 335, 50, 1], ["heart", 200, 100, 1.3], ["palm", 360, 212, 1], ["person", 110, 220, 1.2, BR, 0, "sbu"], ["person", 180, 224, 1.1, T, 1, "u"], ["person", 245, 222, 1.1, IN, 0, "u"]], tx: "Cruzaron a salvo. Todos cantaron y bailaron de alegría, dándole gracias a Dios por cuidarlos." }
+        ] },
+      { t: "David y el gigante Goliat", ref: "1 Samuel 17", lb: 8, cap: 17,
+        les: "Con Dios podemos ser valientes, aunque seamos pequeños.", pre: "¿Qué te ayuda a ser valiente?", ora: "Dios, dame valentía porque tú estás conmigo.",
+        es: [
+          { bg: "day", gr: "grass", it: [["sun", 340, 46, 1], ["cloud", 160, 46, 1], ["hill", 100, 180, 1.2, "#58a865"], ["sheep", 85, 218, 1], ["sheep", 150, 224, .9], ["sheep", 310, 218, 1], ["person", 225, 220, 1.1, OR, 0, "s"]], tx: "David era un joven pastor que cuidaba las ovejas de su papá. Un día, un gigante llamado Goliat se burló del pueblo de Dios, y todos tuvieron miedo." },
+          { bg: "day", gr: "grass", it: [["cloud", 200, 46, 1], ["mount", 360, 178, .7], ["person", 105, 224, 1, OR, 0], ["person", 295, 226, 2.3, "#7b8794", 0, "g"]], tx: "David no tuvo miedo. Dijo: «Dios está conmigo». Tomó su honda y cinco piedras lisas y salió a enfrentar al gigante." },
+          { bg: "day", gr: "grass", it: [["sun", 200, 46, 1.2], ["heart", 320, 100, 1.3], ["sheep", 105, 222, 1], ["sheep", 300, 222, 1], ["person", 200, 222, 1.25, OR, 0, "u"]], tx: "Con una sola piedra, David venció a Goliat. No fue por su fuerza, sino porque Dios lo ayudó. ¡Todos celebraron!" }
+        ] },
+      { t: "Daniel y los leones", ref: "Daniel 6", lb: 26, cap: 6,
+        les: "Dios cuida a quienes le son fieles, aun cuando es difícil.", pre: "¿En qué momentos del día te gusta hablar con Dios?", ora: "Dios, quiero hablar contigo todos los días.",
+        es: [
+          { bg: "day", gr: "sand", it: [["sun", 60, 50, 1], ["house", 305, 204, 1.4], ["palm", 55, 214, 1], ["person", 170, 220, 1.25, IN, 0, "bu"]], tx: "Daniel hablaba con Dios tres veces al día. Unos hombres hicieron una ley para que dejara de orar, pero Daniel siguió orando." },
+          { bg: "dusk", gr: "sand", it: [["lion", 80, 224, 1.1], ["lion", 330, 224, 1.1], ["person", 195, 222, 1.2, IN, 0, "bu"], ["angel", 275, 150, 1.1]], tx: "Lo echaron con los leones. Pero Dios envió un ángel que cerró la boca de los leones. ¡No le hicieron nada!" },
+          { bg: "day", gr: "sand", it: [["sun", 345, 50, 1], ["heart", 200, 100, 1.4], ["person", 135, 220, 1.25, IN, 0, "bu"], ["person", 265, 220, 1.2, "#6a1b9a", 0, "bc"], ["lion", 345, 226, .8]], tx: "Por la mañana, Daniel estaba sano y salvo. El rey se puso muy contento y dijo que todos debían honrar al Dios de Daniel." }
+        ] },
+      { t: "Jonás y el gran pez", ref: "Jonás 1–3", lb: 31, cap: 1,
+        les: "Dios perdona y nos da otra oportunidad.", pre: "¿Alguna vez desobedeciste y luego pediste perdón?", ora: "Dios, perdóname cuando me equivoco y ayúdame a obedecerte.",
+        es: [
+          { bg: "storm", gr: "water", it: [["rain", 0, 0, 1], ["boat", 200, 178, 1.4], ["person", 205, 176, .8, "#ff7043", 0, "h"], ["wave", 95, 204, 1.4], ["wave", 305, 208, 1.6], ["wave", 200, 228, 1.4]], tx: "Dios le pidió a Jonás ir a la ciudad de Nínive, pero Jonás se fue en un barco hacia otro lado. Entonces vino una gran tormenta." },
+          { bg: "night", gr: "water", it: STARS([[50, 40], [130, 70, .8], [330, 50, 1.1]]).concat([["moon", 350, 90, .8], ["fish", 190, 190, 1.7], ["person", 185, 206, .5, "#ff7043", 0, "h"]]), tx: "Un pez enorme se tragó a Jonás. Allí dentro, Jonás oró y le pidió perdón a Dios. Dios lo escuchó." },
+          { bg: "day", gr: "sand", it: [["sun", 60, 50, 1], ["wave", 330, 184, 1.4], ["fish", 335, 190, .7], ["palm", 50, 214, 1], ["heart", 200, 100, 1.3], ["person", 160, 220, 1.2, "#ff7043", 0, "hu"]], tx: "El pez dejó a Jonás en la playa. Esta vez Jonás obedeció y fue a Nínive. ¡Dios le dio una segunda oportunidad!" }
+        ] },
+      { t: "La oveja perdida", ref: "Lucas 15:1–7", lb: 41, cap: 15,
+        les: "Eres tan importante para Dios que te busca cuando te alejas.", pre: "¿Cómo crees que se sintió la oveja cuando la encontraron?", ora: "Gracias, Jesús, porque me cuidas y me buscas.",
+        es: [
+          { bg: "day", gr: "grass", it: [["sun", 340, 46, 1], ["cloud", 150, 46, 1], ["hill", 110, 180, 1.2, "#58a865"], ["sheep", 70, 220, .9], ["sheep", 130, 226, .9], ["sheep", 300, 220, .9], ["sheep", 355, 226, .8], ["person", 210, 222, 1.25, M, 0, "s"]], tx: "Un pastor tenía cien ovejas y las cuidaba mucho. Un día se dio cuenta de que una de ellas se había perdido." },
+          { bg: "night", gr: "grass", it: STARS([[60, 40], [160, 70, .8], [260, 40, 1.1]]).concat([["moon", 340, 50, 1], ["mount", 70, 178, 1], ["person", 150, 222, 1.25, M, 0, "s"], ["lamp", 182, 192, 1], ["sheep", 300, 224, .8]]), tx: "El pastor dejó a las otras ovejas y salió a buscarla, aunque era de noche. Buscó y buscó hasta encontrarla." },
+          { bg: "day", gr: "grass", it: [["sun", 345, 46, 1], ["heart", 120, 90, 1.2], ["heart", 290, 90, 1.2], ["tree", 45, 206, 1], ["person", 120, 224, 1.1, T, 1, "u"], ["person", 290, 224, 1.1, OR, 0, "u"], ["person", 205, 222, 1.3, M, 0, "s"], ["sheep", 205, 176, .6]], tx: "Cuando la encontró, la puso sobre sus hombros muy contento y hubo fiesta. Jesús dice que Dios se alegra cuando alguien vuelve a él." }
+        ] },
+      { t: "Nace Jesús", ref: "Lucas 2", lb: 41, cap: 2,
+        les: "Jesús es el regalo más grande que Dios nos dio.", pre: "¿Qué regalo te gustaría darle a Jesús?", ora: "Gracias, Dios, por enviarnos a Jesús.",
+        es: [
+          { bg: "night", gr: "sand", it: [["bigstar", 200, 46, 1.4], ["house", 80, 204, 1.2], ["house", 335, 208, 1.3], ["person", 160, 224, 1.15, "#42a5f5", 1, "h"], ["person", 225, 224, 1.2, BR, 0, "sb"]], tx: "María y José viajaron a Belén. Era de noche y todas las posadas estaban llenas. No había lugar para ellos." },
+          { bg: "night", gr: "sand", it: [["bigstar", 200, 44, 1.3], ["manger", 200, 218, 1.4], ["person", 118, 224, 1.15, "#42a5f5", 1, "h"], ["person", 288, 224, 1.15, BR, 0, "b"], ["sheep", 345, 228, .8]], tx: "Esa noche nació Jesús. Su cama fue un pesebre, donde comen los animales. María y José lo cuidaron con mucho amor." },
+          { bg: "night", gr: "grass", it: [["bigstar", 335, 40, 1], ["angel", 115, 156, 1.15], ["sheep", 190, 228, .9], ["sheep", 345, 228, .8], ["person", 235, 224, 1.1, BR, 0, "sb"], ["person", 290, 226, 1.05, "#5d4037", 0, "hu"]], tx: "Un ángel les dio la buena noticia a unos pastores: «¡Hoy nació el Salvador!». Los pastores corrieron a conocerlo, felices." }
+        ] },
+      { t: "Jesús calma la tormenta", ref: "Marcos 4:35–41", lb: 40, cap: 4,
+        les: "Con Jesús no tenemos que tener miedo.", pre: "¿Qué puedes decirle a Jesús cuando tengas miedo?", ora: "Jesús, tú eres más fuerte que mi miedo. Quédate conmigo.",
+        es: [
+          { bg: "dusk", gr: "water", it: [["sun", 310, 158, 1.2], ["boat", 190, 186, 1.5], ["person", 172, 184, .75, IN, 0, "h"], ["person", 208, 184, .75, W, 0, "b"], ["wave", 80, 206, 1.4], ["wave", 320, 212, 1.4]], tx: "Jesús y sus amigos cruzaban el lago en una barca. Jesús estaba muy cansado y se quedó dormido." },
+          { bg: "storm", gr: "water", it: [["rain", 0, 0, 1], ["boat", 200, 182, 1.4], ["person", 178, 180, .75, IN, 0, "hu"], ["person", 218, 180, .75, T, 0, "u"], ["wave", 85, 204, 1.7], ["wave", 320, 208, 1.7], ["wave", 200, 228, 1.6]], tx: "De pronto vino una gran tormenta. Las olas eran enormes y los amigos de Jesús tuvieron mucho miedo. Corrieron a despertarlo." },
+          { bg: "day", gr: "water", it: [["sun", 335, 50, 1], ["cloud", 100, 50, 1], ["heart", 310, 100, 1.2], ["boat", 200, 188, 1.5], ["person", 176, 186, .75, IN, 0, "hu"], ["person", 220, 186, .75, W, 0, "bu"], ["wave", 85, 208, 1.3], ["wave", 320, 212, 1.3]], tx: "Jesús dijo: «¡Calma!». El viento paró y el mar quedó tranquilo. Jesús puede calmar todas nuestras tormentas." }
+        ] },
+      { t: "Cinco panes y dos peces", ref: "Juan 6:1–13", lb: 42, cap: 6,
+        les: "Cuando compartimos lo poco que tenemos, Dios lo hace alcanzar para todos.", pre: "¿Qué puedes compartir hoy con otra persona?", ora: "Dios, enséñame a compartir con alegría.",
+        es: [
+          { bg: "day", gr: "grass", it: [["sun", 345, 46, 1], ["cloud", 130, 46, 1], ["hill", 90, 180, 1.1, "#58a865"], ["person", 60, 222, 1, RD, 1], ["person", 115, 216, 1.05, V, 0], ["person", 200, 222, 1.25, W, 0, "b"], ["person", 270, 218, 1.05, IN, 0, "b"], ["person", 335, 224, 1, OR, 1, "h"]], tx: "Mucha gente seguía a Jesús para escucharlo. Ya era tarde y todos tenían hambre. ¿Qué podían hacer?" },
+          { bg: "day", gr: "grass", it: [["sun", 60, 46, 1], ["cloud", 330, 50, 1], ["person", 190, 222, 1.35, W, 0, "bu"], ["person", 115, 226, .65, "#ffd54a", 0], ["basket", 118, 230, .9], ["heart", 300, 110, 1.3]], tx: "Un niño compartió su almuerzo: cinco panes y dos peces. Jesús dio gracias a Dios por esa comida." },
+          { bg: "day", gr: "grass", it: [["sun", 345, 46, 1], ["heart", 200, 90, 1.5], ["basket", 80, 222, 1.2], ["basket", 160, 228, 1.2], ["basket", 240, 228, 1.2], ["basket", 320, 222, 1.2]], tx: "¡Todos comieron hasta quedar llenos! Y todavía sobraron doce canastas. Cuando compartimos, Dios multiplica." }
+        ] },
+      { t: "El buen samaritano", ref: "Lucas 10:25–37", lb: 41, cap: 10,
+        les: "Amar al prójimo es ayudar a quien lo necesita.", pre: "¿A quién puedes ayudar esta semana?", ora: "Jesús, ayúdame a ser amable y a ayudar a los demás.",
+        es: [
+          { bg: "day", gr: "sand", it: [["sun", 345, 46, 1], ["mount", 70, 180, 1], ["person", 130, 218, 1.1, "#6a1b9a", 0, "bh"], ["person", 255, 222, 1, RD, 0, "l"]], tx: "Jesús contó esta historia: un viajero fue herido y quedó en el camino. Dos personas lo vieron, pero siguieron de largo." },
+          { bg: "day", gr: "sand", it: [["sun", 60, 46, 1], ["heart", 205, 100, 1.4], ["palm", 350, 214, 1], ["person", 170, 222, 1.2, T, 1, "h"], ["person", 255, 222, 1, RD, 0, "l"]], tx: "Pasó un samaritano. Él sí se detuvo, le curó las heridas y lo cuidó con cariño." },
+          { bg: "day", gr: "sand", it: [["sun", 60, 46, 1], ["heart", 190, 96, 1.4], ["house", 305, 206, 1.6], ["person", 135, 222, 1.2, T, 1, "h"], ["person", 210, 224, 1.05, RD, 0]], tx: "Lo llevó a una posada para que descansara y se cuidara. Jesús dijo: «Ve y haz tú lo mismo». Ayudar a los demás es amar como Jesús." }
+        ] },
+      { t: "Zaqueo y Jesús", ref: "Lucas 19:1–10", lb: 41, cap: 19,
+        les: "Jesús nos busca a todos, y él puede cambiar nuestro corazón.", pre: "¿Qué cosa buena puedes hacer hoy para alguien?", ora: "Jesús, entra en mi corazón y cámbiame.",
+        es: [
+          { bg: "day", gr: "grass", it: [["sun", 345, 46, 1], ["cloud", 150, 46, 1], ["house", 65, 206, 1.2], ["person", 125, 224, .8, M, 0], ["person", 185, 222, 1.15, RD, 1], ["person", 245, 222, 1.25, W, 0, "b"], ["person", 305, 222, 1.1, V, 0, "b"], ["person", 360, 224, 1, OR, 1, "h"]], tx: "Zaqueo era bajito y quería ver a Jesús, pero había tanta gente que no lo lograba." },
+          { bg: "day", gr: "grass", it: [["sun", 60, 46, 1], ["cloud", 330, 50, 1], ["tree", 265, 214, 1.8], ["person", 270, 150, .65, M, 0, "u"], ["person", 140, 222, 1.3, W, 0, "b"]], tx: "Zaqueo se subió a un árbol para verlo mejor. Jesús lo miró y le dijo: «Zaqueo, baja. ¡Hoy quiero estar en tu casa!»" },
+          { bg: "day", gr: "grass", it: [["sun", 345, 46, 1], ["heart", 200, 96, 1.5], ["house", 310, 206, 1.4], ["coin", 70, 226, 1], ["coin", 90, 232, 1], ["person", 150, 222, .9, M, 0, "u"], ["person", 225, 222, 1.25, W, 0, "b"]], tx: "Zaqueo se puso muy feliz. Prometió devolver lo que no era suyo y compartir con los pobres. ¡Su corazón cambió!" }
+        ] },
+      { t: "¡Jesús vive!", ref: "Mateo 28", lb: 39, cap: 28,
+        les: "Jesús venció a la muerte y vive hoy. ¡Está contigo!", pre: "¿Qué le dirías a Jesús si lo vieras hoy?", ora: "Gracias, Jesús, porque estás vivo y estás conmigo.",
+        es: [
+          { bg: "dusk", gr: "grass", it: [["tomb", 270, 216, 1.4], ["person", 110, 224, 1.2, R, 1, "h"], ["person", 165, 228, 1.1, T, 1, "h"]], tx: "Jesús murió porque nos ama. Sus amigos estaban muy tristes. Pusieron a Jesús en una tumba y taparon la entrada con una piedra grande." },
+          { bg: "dawn", gr: "grass", it: [["sun", 340, 62, 1.2], ["tomb", 270, 216, 1.4, 1], ["angel", 215, 160, 1.1], ["person", 80, 224, 1.15, R, 1, "hu"], ["person", 135, 228, 1.1, T, 1, "hu"]], tx: "El domingo, muy temprano, las mujeres fueron a la tumba y vieron que estaba vacía. Un ángel les dijo: «¡Jesús ha resucitado!»" },
+          { bg: "day", gr: "grass", it: [["sun", 60, 50, 1.1], ["heart", 200, 76, 1.6], ["tree", 45, 208, 1.1], ["tree", 355, 208, 1.1], ["person", 200, 222, 1.35, W, 0, "bu"], ["person", 125, 224, 1.1, IN, 0, "u"], ["person", 280, 224, 1.1, RD, 1, "u"]], tx: "Jesús se apareció a sus amigos y les dijo: «No tengan miedo». ¡Jesús vive hoy y está contigo todos los días!" }
+        ] }
+    ];
+
+    var cur = 0, esc = 0, hablando = false;
+    var store2 = { get: function (k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }, set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+    var vistos = store2.get("refugio-ninos") || [];
+    function hoy() { var d = new Date(); return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5) % HIST.length; }
+    function parar() { try { window.speechSynthesis.cancel(); } catch (e) {} hablando = false; $("kListen").textContent = "🔊 Escuchar la historia"; }
+    function pintar() {
+      var h = HIST[cur], e = h.es[esc];
+      $("kSvg").innerHTML = dibujar(e); $("kSvg").setAttribute("aria-label", "Dibujo " + (esc + 1) + " de " + h.es.length + ": " + h.t);
+      $("kText").textContent = e.tx;
+      $("kPrev").disabled = esc === 0; $("kNext").disabled = esc === h.es.length - 1;
+      Array.prototype.forEach.call($("kDots").children, function (b, i) { b.setAttribute("aria-current", i === esc ? "true" : "false"); });
+      if (esc === h.es.length - 1 && vistos.indexOf(cur) < 0) { vistos.push(cur); store2.set("refugio-ninos", vistos); marcarPick(); }
+    }
+    function marcarPick() { Array.prototype.forEach.call($("kPick").children, function (b, i) { b.setAttribute("aria-current", i === cur ? "true" : "false"); b.className = vistos.indexOf(i) > -1 ? "visto" : ""; }); }
+    function abrir(i, desdeUsuario) {
+      parar(); cur = i; esc = 0; var h = HIST[i], d = new Date();
+      $("kBadge").textContent = i === hoy() ? "Historia de hoy · " + d.toLocaleDateString("es-CO", { weekday: "long", day: "numeric", month: "long" }) : "Historia " + (i + 1) + " de " + HIST.length;
+      $("kTitle").textContent = h.t; $("kRef").textContent = "Está en la Biblia: " + h.ref;
+      $("kLes").textContent = h.les; $("kPre").textContent = h.pre; $("kOra").textContent = h.ora;
+      $("kShare").href = "https://wa.me/?text=" + encodeURIComponent("📖 Historia bíblica para niños: " + h.t + " (" + h.ref + ")\nCon dibujos, para leer en familia:\nhttps://mirefugioencristo.com/#ninos\n\nMi Refugio · Ganando almas para Cristo");
+      var dots = $("kDots"); dots.innerHTML = "";
+      h.es.forEach(function (_, n) { var b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-label", "Ir al dibujo " + (n + 1)); b.addEventListener("click", function () { parar(); esc = n; pintar(); }); dots.appendChild(b); });
+      marcarPick(); pintar();
+      if (desdeUsuario) { var c = $("kBadge"); if (c.scrollIntoView) c.scrollIntoView({ behavior: "smooth", block: "center" }); }
+    }
+    var pk = $("kPick");
+    HIST.forEach(function (h, i) { var b = document.createElement("button"); b.type = "button"; b.textContent = (i + 1) + ". " + h.t; b.addEventListener("click", function () { abrir(i, true); }); pk.appendChild(b); });
+    $("kPrev").addEventListener("click", function () { if (esc > 0) { parar(); esc--; pintar(); } });
+    $("kNext").addEventListener("click", function () { if (esc < HIST[cur].es.length - 1) { parar(); esc++; pintar(); } });
+    $("kBible").addEventListener("click", function () {
+      var h = HIST[cur], ntv = vbox.querySelector('input[value="NTV"]'); if (ntv) ntv.checked = true;
+      sel.value = String(h.lb); fillCaps(h.cap); fillDesde(""); paintBiblia(); $("bRead").click();
+    });
+    $("kListen").addEventListener("click", function () {
+      if (!("speechSynthesis" in window)) { $("kListen").textContent = "Tu dispositivo no puede leer en voz alta"; return; }
+      if (hablando) { parar(); return; }
+      var h = HIST[cur], txt = h.t + ". " + h.es.map(function (x) { return x.tx; }).join(" ") + " Lo que aprendemos: " + h.les;
+      var u = new SpeechSynthesisUtterance(txt); u.lang = "es-419"; u.rate = 0.92;
+      u.onend = u.onerror = function () { hablando = false; $("kListen").textContent = "🔊 Escuchar la historia"; };
+      hablando = true; $("kListen").textContent = "⏹ Detener"; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+    });
+    window.addEventListener("pagehide", parar);
+    abrir(hoy(), false);
+  })();
 
   /* ====== Cuaderno de estudio ====== */
   var NOTAS = ["nPas", "nO", "nI", "nA"], nSt = store.get("refugio-notas") || {};
