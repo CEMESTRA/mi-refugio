@@ -16,6 +16,7 @@ self.addEventListener("fetch", function (e) {
   if (req.method !== "GET") return;
   var url = new URL(req.url);
   if (url.origin !== self.location.origin) return; /* fuentes, API.Bible, etc. pasan directo */
+  if (/\.mp3$/i.test(url.pathname)) return; /* audios: los pide el navegador directo (necesitan Range en iPhone) */
   e.respondWith(
     fetch(req).then(function (res) {
       if (res && res.ok) { var copia = res.clone(); caches.open(CACHE).then(function (c) { c.put(req, copia); }); }

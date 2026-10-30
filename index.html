@@ -1900,7 +1900,7 @@
           { bg: "day", gr: "grass", it: [["sun", 60, 50, 1], ["cloud", 200, 52, 1], ["cloud", 320, 86, .8], ["hill", 90, 176, 1.1, "#58a865"], ["hill", 330, 178, 1.2, "#4f9d5d"], ["tree", 50, 206, 1.1], ["tree", 150, 212, .9], ["tree", 345, 208, 1.2]], tx: "Dios hizo el cielo, el mar, la tierra, los árboles, el sol, la luna y las estrellas. Y todo lo que hacía le parecía muy bueno." },
           { bg: "day", gr: "grass", it: [["sun", 345, 46, .9], ["cloud", 110, 46, 1], ["rainbow", 200, 178, 1.7], ["tree", 40, 206, 1.1], ["sheep", 105, 218, 1], ["lion", 300, 218, 1], ["person", 190, 220, 1.2, M, 0], ["person", 238, 224, 1.05, T, 1]], tx: "Después Dios hizo a los animales y, al final, a las personas. Dios te hizo con mucho amor y te cuida todos los días." }
         ] },
-      { t: "Noé y el arca", ref: "Génesis 6–9", lb: 0, cap: 6,
+      { t: "Noé y el arca", ref: "Génesis 6–9", lb: 0, cap: 6, au: "noe",
         les: "Cuando obedecemos a Dios, él nos cuida. Y Dios siempre cumple sus promesas.", pre: "¿Cómo crees que se sintió Noé cuando vio el arcoíris?", ora: "Gracias, Dios, porque cumples tus promesas.",
         es: [
           { bg: "day", gr: "grass", it: [["cloud", 90, 46, 1], ["cloud", 310, 70, .8], ["tree", 40, 206, 1], ["tree", 365, 206, 1.1], ["ark", 215, 205, 1.3], ["person", 100, 220, 1.2, BR, 0, "sb"]], tx: "Noé era un hombre bueno que obedecía a Dios. Un día Dios le dijo: «Construye un barco muy grande». Y Noé lo construyó." },
@@ -2110,8 +2110,9 @@
     var store2 = { get: function (k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }, set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
     var vistos = store2.get("refugio-ninos") || [];
     function hoy() { var d = new Date(); return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5) % HIST.length; }
-    var narr = 0, etiqueta = "🔊 Escuchar y ver la historia";
-    function parar() { narr++; try { window.speechSynthesis.cancel(); } catch (e) {} hablando = false; $("kListen").textContent = etiqueta; }
+    var narr = 0, etiqueta = "🔊 Escuchar y ver la historia", aud = new Audio();
+    aud.preload = "auto";
+    function parar() { narr++; try { aud.pause(); aud.onended = aud.onerror = null; } catch (e) {} try { window.speechSynthesis.cancel(); } catch (e) {} hablando = false; $("kListen").textContent = etiqueta; }
     function pintar() {
       var h = HIST[cur], e = h.es[esc];
       $("kSvg").innerHTML = dibujar(e); $("kSvg").setAttribute("aria-label", "Dibujo " + (esc + 1) + " de " + h.es.length + ": " + h.t);
@@ -2196,11 +2197,27 @@
         else hablar("Lo que aprendemos. " + h.les, token, terminar);
       });
     }
+    /* Historias con voz grabada: un audio por dibujo y uno de cierre (audio/<nombre>-N.mp3) */
+    function narrarAudio(token) {
+      var h = HIST[cur], n = h.es.length;
+      function respaldo(k) { if (token !== narr) return; try { aud.pause(); } catch (e) {} esc = Math.min(k, n - 1); pintar(); if (TTS) escena(token); else terminar(); }
+      function clip(k) {
+        if (token !== narr) return;
+        if (k < n) { esc = k; pintar(); }
+        aud.onended = function () { if (token !== narr) return; if (k < n) setTimeout(function () { clip(k + 1); }, 550); else terminar(); };
+        aud.onerror = function () { respaldo(k); };
+        aud.src = "audio/" + h.au + "-" + (k + 1) + ".mp3";
+        var pr; try { pr = aud.play(); } catch (e) { respaldo(k); return; }
+        if (pr && pr.catch) pr.catch(function () { respaldo(k); });
+      }
+      clip(esc);
+    }
     function empezar() {
       var h = HIST[cur], token = ++narr;
       try { window.speechSynthesis.cancel(); } catch (e) {}
       hablando = true; $("kListen").textContent = "⏹ Detener";
       if (esc >= h.es.length - 1) { esc = 0; pintar(); }
+      if (h.au) { narrarAudio(token); return; }
       if (esc === 0) hablar(h.t + ".", token, function () { escena(token); }); else escena(token);
     }
     $("kListen").addEventListener("click", function () { if (hablando) { parar(); return; } empezar(); });
