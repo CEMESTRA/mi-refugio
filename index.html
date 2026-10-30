@@ -1409,7 +1409,10 @@
     $("instNow").addEventListener("click", function () { if (dp) { var d = dp; dp = null; d.prompt(); if (d.userChoice) d.userChoice.then(function () { cerrarGuia(); ocultar(); }); } });
     $("instLink").addEventListener("click", function () { copyText("https://mirefugioencristo.com/", $("instLinkOk"), "Copiado. Pégalo en Chrome o Safari."); });
     /* Enlace directo: mirefugioencristo.com/instalar abre la pantalla de instalación */
-    if (/[?&]instalar=1\b/.test(location.search)) {
+    var pI = (location.search.match(/[?&]instalar=(1|ios|android)\b/) || [])[1];
+    if (pI === "ios") { ios = true; android = false; movil = true; }
+    if (pI === "android") { android = true; ios = false; movil = true; }
+    if (pI) {
       try { history.replaceState(null, "", location.pathname + location.hash); } catch (e) {}
       if (!standalone()) setTimeout(function () { guia(); $("instCopy").hidden = !(enApp || (!dp && movil)); sincronizarAhora(); }, 1200);
     }
