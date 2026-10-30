@@ -321,6 +321,21 @@
   .crel { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
   @media (prefers-reduced-motion: reduce) { .cv, .cchips button { animation: none; transition: none; } }
 
+  /* Tarjeta del versículo de hoy al abrir */
+  .vdcard { position: fixed; z-index: 46; left: 50%; bottom: 24px; width: min(540px, calc(100% - 24px)); transform: translate(-50%, 140%); opacity: 0; pointer-events: none;
+    background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-top: 5px solid var(--accent); border-radius: 22px; padding: 16px 18px 16px; box-shadow: 0 24px 60px rgba(20,17,28,0.34);
+    display: grid; gap: 8px; transition: transform .6s cubic-bezier(.34,1.35,.64,1), opacity .4s; }
+  .vdcard.on { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
+  .vdcard .vdh { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .vdcard .vdk { font-size: 0.78rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+  .vdcard .vdx { width: 38px; height: 38px; border-radius: 50%; border: 0; cursor: pointer; background: var(--surface-2); color: var(--fg); font-size: 1.4rem; line-height: 1; display: grid; place-items: center; padding: 0 0 2px; }
+  .vdcard q { quotes: none; font-family: var(--font-verse); font-style: italic; font-size: clamp(1.05rem, 3.6vw, 1.25rem); line-height: 1.45; display: block; }
+  .vdcard .vdr { font-weight: 800; color: var(--accent); font-size: 0.95rem; }
+  .vdcard .vda { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .vdcard .vda .btn { width: auto; flex: 1 1 140px; padding: 9px 14px; min-height: 42px; font-size: 0.92rem; }
+  @media (max-width: 820px) { .vdcard { bottom: calc(100px + env(safe-area-inset-bottom, 0px)); } }
+  @media (prefers-reduced-motion: reduce) { .vdcard { transition: none; } }
+
   /* Lector de la Biblia */
   .vers label.main span { border-color: var(--accent); }
   .vers label.aqui span::after { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: 0.7; margin-left: 8px; vertical-align: middle; }
@@ -1024,6 +1039,12 @@
   <button class="go" id="instGo" type="button"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg></span>Instalar app</button>
   <button class="x" id="instX" type="button" aria-label="Ocultar el aviso de instalación"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
 </div>
+<div class="vdcard" id="vdCard" role="dialog" aria-labelledby="vdK" hidden>
+  <div class="vdh"><span class="vdk" id="vdK">✨ Tu versículo de hoy</span><button class="vdx" id="vdX" type="button" aria-label="Cerrar">×</button></div>
+  <q id="vdT"></q><span class="vdr" id="vdR"></span>
+  <div class="vda"><a class="btn small" id="vdMas" href="#versiculo">Ver más</a><a class="btn wa small" id="vdWa" href="https://wa.me/" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#wa"/></svg>Compartir</a></div>
+</div>
+
 <div class="dlg" id="instDlg" hidden role="dialog" aria-modal="true" aria-labelledby="instT">
   <div class="dlg-box">
     <img class="appico" src="icon-192.png" alt="" width="64" height="64">
@@ -1197,6 +1218,27 @@
   $("vHoy").addEventListener("click", function () { off = 0; showVerse(); });
   $("vCopy").addEventListener("click", function () { copyText("“" + cur[2] + "” " + cur[1] + " (RVR1960)", $("vToast"), "Versículo copiado."); });
   showVerse();
+
+  /* Tarjeta del versículo de hoy: aparece una vez al día al abrir */
+  (function () {
+    var card = $("vdCard"), hoyK = new Date().toISOString().slice(0, 10), tm;
+    function visto() { try { return localStorage.getItem("refugio-vd") === new Date().getFullYear() + "-" + new Date().getMonth() + "-" + new Date().getDate(); } catch (e) { return false; } }
+    function marcar() { try { localStorage.setItem("refugio-vd", new Date().getFullYear() + "-" + new Date().getMonth() + "-" + new Date().getDate()); } catch (e) {} }
+    function cerrar() { card.classList.remove("on"); setTimeout(function () { card.hidden = true; }, 600); }
+    $("vdX").addEventListener("click", cerrar);
+    $("vdMas").addEventListener("click", function () { cerrar(); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && card.classList.contains("on")) cerrar(); });
+    var ajeno = /[?&]instalar=/.test(location.search) || (location.hash && location.hash !== "#inicio" && location.hash !== "#");
+    if (visto() || ajeno || !cur) return;
+    tm = setTimeout(function () {
+      var dlg = $("instDlg"); if (dlg && !dlg.hidden) return;
+      if (off !== 0) return;
+      $("vdT").textContent = "“" + cur[2] + "”"; $("vdR").textContent = cur[1] + " · RVR1960";
+      $("vdWa").href = "https://wa.me/?text=" + encodeURIComponent("“" + cur[2] + "”\n" + cur[1] + " (RVR1960)\n\nMi Refugio · mirefugioencristo.com");
+      card.hidden = false; void card.offsetWidth; card.classList.add("on"); marcar();
+      setTimeout(function () { if (card.classList.contains("on")) cerrar(); }, 30000);
+    }, 1800);
+  })();
 
   /* ====== Oración de fe ====== */
   bindWa($("waOre"), function (c) { return c.etiqueta; },
