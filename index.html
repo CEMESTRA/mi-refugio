@@ -241,10 +241,13 @@
 
 
   /* Lector de la Biblia */
+  .vers label.main span { border-color: var(--accent); }
   .vers label.aqui span::after { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: 0.7; margin-left: 8px; vertical-align: middle; }
   .reader { scroll-margin-top: 90px; }
   .reader-head { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; justify-content: space-between; margin-bottom: 14px; }
   .reader-nav { display: flex; flex-wrap: wrap; gap: 8px; }
+  .reader-nav .btn { width: auto; flex: 1 1 auto; padding: 9px 12px; min-height: 42px; font-size: 0.9rem; }
+  @media (max-width: 520px) { .reader-nav { width: 100%; } .reader-nav .btn { flex: 1 1 30%; padding: 9px 6px; } }
   .reader-body { display: grid; gap: 0; }
   .vrow { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr); gap: 4px 6px; padding: 12px 0; border-top: 1px solid var(--line); }
   .vrow:first-child { border-top: 0; }
@@ -655,7 +658,7 @@
       <div class="sec-head">
         <p class="eyebrow">Biblia y estudio</p>
         <h2>Compara versiones y estudia la Palabra</h2>
-        <p>Elige el libro, el capítulo y los versículos. La <b>Reina-Valera 1909</b> y la <b>King James</b> se leen aquí mismo, una junto a la otra. Las versiones modernas (RVR1960, NVI, NBLA y otras) tienen derechos de autor y se abren en BibleGateway.</p>
+        <p>Elige el libro, el capítulo y los versículos. La <b>Nueva Traducción Viviente (NTV)</b> se lee aquí mismo. Para <b>compararla</b> con la RVR1960, la NVI, la TLA y otras, ábrelas todas juntas en BibleGateway.</p>
       </div>
       <div class="two">
         <div class="panel">
@@ -666,10 +669,11 @@
             <div class="field"><label for="bDesde">Desde el versículo</label><select id="bDesde"></select></div>
             <div class="field"><label for="bHasta">Hasta el versículo</label><select id="bHasta"></select></div>
           </div>
+          <p class="hint" style="margin:6px 0 8px">Versiones principales: NTV, RVR1960, NVI y TLA.</p>
           <fieldset class="vers" id="bVers" aria-label="Versiones de la Biblia"></fieldset>
           <p class="hint" id="bInfo"></p>
           <div class="solo" id="bSolo" hidden><p class="hint">Leer cada versión por separado (se lee mejor en el celular):</p><div class="solo-links" id="bSoloLinks"></div></div>
-          <div class="row"><button class="btn" id="bRead" type="button">Leer aquí</button><a class="btn alt" id="bGo" href="https://www.biblegateway.com/" target="_blank" rel="noopener">Abrir en BibleGateway</a></div>
+          <div class="row"><button class="btn" id="bRead" type="button">Leer la NTV aquí</button><a class="btn alt" id="bGo" href="https://www.biblegateway.com/" target="_blank" rel="noopener">Comparar en BibleGateway</a></div>
         </div>
         <div class="panel">
           <h3>Plan de 21 días en el Evangelio de Juan</h3>
@@ -776,7 +780,7 @@
   <div class="wrap">
     <a class="brand" href="#inicio"><img src="emblema.webp" alt="" width="360" height="236"><span><b>Mi Refugio</b><small>Ganando almas para Cristo</small></span></a>
     <p>Mi Refugio es un ministerio independiente. Compartimos el evangelio, oramos por las personas y acompañamos el estudio de la Biblia.</p>
-    <p>Textos bíblicos: Reina-Valera 1960® © Sociedades Bíblicas en América Latina, 1960. Derechos renovados © Sociedades Bíblicas Unidas, 1988. Usados con permiso. Reina-Valera 1909 y King James: textos de dominio público, que se leen en esta página. Las demás versiones se abren en BibleGateway.</p>
+    <p>Textos bíblicos: Reina-Valera 1960® © Sociedades Bíblicas en América Latina, 1960. Derechos renovados © Sociedades Bíblicas Unidas, 1988. Usados con permiso. La Nueva Traducción Viviente (NTV) se muestra mediante API.Bible, con el aviso de derechos junto al texto. Las demás versiones se comparan en BibleGateway.</p>
     <p>Esta página no recopila datos personales. Los mensajes que envías por WhatsApp llegan solo a la persona que elijas. © 2026 Mi Refugio.</p>
   </div>
 </footer>
@@ -1032,7 +1036,7 @@
     ["Génesis","Genesis"],["Éxodo","Exodus"],["Levítico","Leviticus"],["Números","Numbers"],["Deuteronomio","Deuteronomy"],["Josué","Joshua"],["Jueces","Judges"],["Rut","Ruth"],["1 Samuel","1 Samuel"],["2 Samuel","2 Samuel"],["1 Reyes","1 Kings"],["2 Reyes","2 Kings"],["1 Crónicas","1 Chronicles"],["2 Crónicas","2 Chronicles"],["Esdras","Ezra"],["Nehemías","Nehemiah"],["Ester","Esther"],["Job","Job"],["Salmos","Psalm"],["Proverbios","Proverbs"],["Eclesiastés","Ecclesiastes"],["Cantares","Song of Solomon"],["Isaías","Isaiah"],["Jeremías","Jeremiah"],["Lamentaciones","Lamentations"],["Ezequiel","Ezekiel"],["Daniel","Daniel"],["Oseas","Hosea"],["Joel","Joel"],["Amós","Amos"],["Abdías","Obadiah"],["Jonás","Jonah"],["Miqueas","Micah"],["Nahúm","Nahum"],["Habacuc","Habakkuk"],["Sofonías","Zephaniah"],["Hageo","Haggai"],["Zacarías","Zechariah"],["Malaquías","Malachi"],
     ["Mateo","Matthew"],["Marcos","Mark"],["Lucas","Luke"],["Juan","John"],["Hechos","Acts"],["Romanos","Romans"],["1 Corintios","1 Corinthians"],["2 Corintios","2 Corinthians"],["Gálatas","Galatians"],["Efesios","Ephesians"],["Filipenses","Philippians"],["Colosenses","Colossians"],["1 Tesalonicenses","1 Thessalonians"],["2 Tesalonicenses","2 Thessalonians"],["1 Timoteo","1 Timothy"],["2 Timoteo","2 Timothy"],["Tito","Titus"],["Filemón","Philemon"],["Hebreos","Hebrews"],["Santiago","James"],["1 Pedro","1 Peter"],["2 Pedro","2 Peter"],["1 Juan","1 John"],["2 Juan","2 John"],["3 Juan","3 John"],["Judas","Jude"],["Apocalipsis","Revelation"]
   ];
-  var VERSIONES = [["RV1909","Reina-Valera 1909 (se lee aquí)"],["RVR1960","Reina-Valera 1960"],["NVI","Nueva Versión Internacional"],["NBLA","Nueva Biblia de las Américas"],["LBLA","La Biblia de las Américas"],["DHH","Dios Habla Hoy"],["NTV","Nueva Traducción Viviente"],["TLA","Traducción en Lenguaje Actual"],["RVA-2015","Reina-Valera Actualizada 2015"],["KJV","King James (inglés, se lee aquí)"]];
+  var VERSIONES = [["NTV","Nueva Traducción Viviente (se lee aquí)"],["RVR1960","Reina-Valera 1960"],["NVI","Nueva Versión Internacional"],["TLA","Traducción en Lenguaje Actual"],["NBLA","Nueva Biblia de las Américas"],["LBLA","La Biblia de las Américas"],["DHH","Dios Habla Hoy"],["RVA-2015","Reina-Valera Actualizada 2015"],["KJV","King James (inglés)"]];
   var sel = $("bLibro");
   LIBROS.forEach(function (l, i) {
     if (i === 0 || i === 39) { var g = document.createElement("optgroup"); g.label = i === 0 ? "Antiguo Testamento" : "Nuevo Testamento"; sel.appendChild(g); }
@@ -1042,12 +1046,12 @@
   var vbox = $("bVers"), mq = window.matchMedia ? window.matchMedia("(max-width: 700px)") : { matches: false };
   function maxV() { return mq.matches ? 2 : 4; }
   if (mq.addEventListener) mq.addEventListener("change", function () { paintBiblia(); });
-  var AQUI = { RV1909: "rv1909", KJV: "kjv" }, LAB = { RV1909: "Reina-Valera 1909", KJV: "King James" };
+  var AQUI = { NTV: true }, VPRINC = ["NTV", "RVR1960", "NVI", "TLA"];
   VERSIONES.forEach(function (v) {
     var lb = document.createElement("label"); var inp = document.createElement("input"); inp.type = "checkbox"; inp.value = v[0];
-    inp.checked = v[0] === "RV1909" || v[0] === "RVR1960";
-    if (AQUI[v[0]]) lb.className = "aqui";
-    var sp = document.createElement("span"); sp.textContent = v[0] === "RVA-2015" ? "RVA 2015" : v[0] === "RV1909" ? "RV 1909" : v[0];
+    inp.checked = v[0] === "NTV" || v[0] === "RVR1960";
+    lb.className = (AQUI[v[0]] ? "aqui " : "") + (VPRINC.indexOf(v[0]) > -1 ? "main" : "");
+    var sp = document.createElement("span"); sp.textContent = v[0] === "RVA-2015" ? "RVA 2015" : v[0];
     lb.title = v[1]; lb.appendChild(inp); lb.appendChild(sp); vbox.appendChild(lb);
     inp.addEventListener("change", paintBiblia);
   });
@@ -1058,22 +1062,19 @@
     if (checked.length > maxV()) { for (var k = checked.length - 1; k >= maxV(); k--) checked[k].checked = false; checked = checked.slice(0, maxV()); Array.prototype.forEach.call(vbox.querySelectorAll("input"), function (i) { i.disabled = !i.checked && checked.length >= maxV(); }); }
     var ok = checked.length > 0 && cap > 0;
     var go = $("bGo"), rd = $("bRead");
-    var aqui = checked.filter(function (i) { return AQUI[i.value]; }), fuera = checked.filter(function (i) { return !AQUI[i.value]; });
+    var aqui = checked.filter(function (i) { return AQUI[i.value]; });
     rd.disabled = !aqui.length;
     if (!ok) { go.removeAttribute("href"); go.setAttribute("aria-disabled", "true"); $("bInfo").textContent = "Elige un capítulo y al menos una versión."; return; }
     var pasaje = libro[1] + " " + cap + (ver ? ":" + ver : "");
-    if (fuera.length) {
-      go.href = "https://www.biblegateway.com/passage/?search=" + encodeURIComponent(pasaje) + "&version=" + fuera.map(function (i) { return i.value; }).join(";");
-      go.removeAttribute("aria-disabled");
-    } else { go.removeAttribute("href"); go.setAttribute("aria-disabled", "true"); }
+    go.href = "https://www.biblegateway.com/passage/?search=" + encodeURIComponent(pasaje) + "&version=" + checked.map(function (i) { return i.value; }).join(";");
+    go.removeAttribute("aria-disabled");
     var info = "Pasaje: " + libro[0] + " " + cap + (ver ? ":" + ver : "") + ".";
-    if (aqui.length) info += " Se leen aquí: " + aqui.map(function (i) { return LAB[i.value]; }).join(" y ") + ".";
-    if (fuera.length) info += " Se abren en BibleGateway: " + fuera.map(function (i) { return i.value === "RVA-2015" ? "RVA 2015" : i.value; }).join(", ") + " (tienen derechos de autor).";
-    if (!aqui.length) info += " Para leer aquí, marca Reina-Valera 1909 o King James.";
+    info += aqui.length ? " La NTV se lee aquí." : " Para leer aquí, marca la NTV.";
+    info += " " + (checked.length > 1 ? "Las " + checked.length + " versiones marcadas se comparan en BibleGateway." : "Se puede abrir también en BibleGateway.");
     $("bInfo").textContent = info;
     var solo = $("bSolo"), links = $("bSoloLinks"); links.innerHTML = "";
-    if (fuera.length > 1) {
-      fuera.forEach(function (i) { var a = document.createElement("a"); a.target = "_blank"; a.rel = "noopener"; a.textContent = i.value === "RVA-2015" ? "RVA 2015" : i.value; a.href = "https://www.biblegateway.com/passage/?search=" + encodeURIComponent(pasaje) + "&version=" + i.value; links.appendChild(a); });
+    if (checked.length > 1) {
+      checked.forEach(function (i) { var a = document.createElement("a"); a.target = "_blank"; a.rel = "noopener"; a.textContent = i.value === "RVA-2015" ? "RVA 2015" : i.value; a.href = "https://www.biblegateway.com/passage/?search=" + encodeURIComponent(pasaje) + "&version=" + i.value; links.appendChild(a); });
       solo.hidden = false;
     } else solo.hidden = true;
     if (!$("bReader").hidden) renderReader();
@@ -1134,48 +1135,88 @@
   })();
 
 
-  /* ====== Lector dentro de la página (versiones de dominio público) ====== */
-  var libros_cache = {}, rToken = 0;
-  function cargarLibro(dir, idx) {
-    var k = dir + idx;
-    if (!libros_cache[k]) {
-      libros_cache[k] = fetch("biblia/" + dir + "/" + (idx < 10 ? "0" : "") + idx + ".json").then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); });
-      libros_cache[k].catch(function () { delete libros_cache[k]; });
+  /* ====== Lector dentro de la página: Nueva Traducción Viviente (API.Bible) ====== */
+  var NTV = { id: "826f63861180e056-01", key: "i8fJLF0HkIYtpGvHm5R2q" };
+  var BASES = ["https://rest.api.bible/v1", "https://rest.api.bible", "https://api.scripture.api.bible/v1"], baseOk = null, rToken = 0;
+  var USFM = ["GEN","EXO","LEV","NUM","DEU","JOS","JDG","RUT","1SA","2SA","1KI","2KI","1CH","2CH","EZR","NEH","EST","JOB","PSA","PRO","ECC","SNG","ISA","JER","LAM","EZK","DAN","HOS","JOL","AMO","OBA","JON","MIC","NAM","HAB","ZEP","HAG","ZEC","MAL","MAT","MRK","LUK","JHN","ACT","ROM","1CO","2CO","GAL","EPH","PHP","COL","1TH","2TH","1TI","2TI","TIT","PHM","HEB","JAS","1PE","2PE","1JN","2JN","3JN","JUD","REV"];
+  function apiGet(path) {
+    var lista = baseOk ? [baseOk] : BASES, i = 0;
+    function sig() {
+      if (i >= lista.length) return Promise.reject(new Error("red"));
+      var b = lista[i++];
+      return fetch(b + path, { headers: { "api-key": NTV.key } }).then(function (r) {
+        if (r.status === 429) throw new Error("limite");
+        if (r.status === 401 || r.status === 403) throw new Error("auth");
+        if (!r.ok) return sig();
+        baseOk = b; return r.json();
+      }, function () { return sig(); });
     }
-    return libros_cache[k];
+    return sig();
+  }
+  /* Contador de uso exigido por API.Bible (FUMS) */
+  function fumsId(k) { try { var v = localStorage.getItem(k) || ("r" + Math.random().toString(36).slice(2) + Date.now().toString(36)); localStorage.setItem(k, v); return v; } catch (e) { return "r" + Math.random().toString(36).slice(2); } }
+  var FUMS_D = fumsId("refugio-fums-d"), FUMS_S = "s" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+  function fumsVista(token) {
+    if (!token) return;
+    try { var im = new Image(); im.src = "https://fums.api.bible/f3?t=" + encodeURIComponent(token) + "&dId=" + encodeURIComponent(FUMS_D) + "&sId=" + encodeURIComponent(FUMS_S); } catch (e) {}
+  }
+  function parsear(contenido) {
+    var partes = String(contenido || "").split(/\[(\d+)\]/), vs = {}, orden = [];
+    for (var k = 1; k < partes.length; k += 2) {
+      var n = parseInt(partes[k], 10), t = (partes[k + 1] || "").replace(/\s+/g, " ").trim();
+      if (!vs[n]) orden.push(n); vs[n] = ((vs[n] ? vs[n] + " " : "") + t).trim();
+    }
+    return { orden: orden, vs: vs, crudo: String(contenido || "").replace(/\s+/g, " ").trim() };
+  }
+  var TTL = 14 * 24 * 3600 * 1000;
+  function cargarCapitulo(idx, cap) {
+    var clave = "refugio-ntv:" + idx + ":" + cap;
+    try { var c = JSON.parse(localStorage.getItem(clave)); if (c && c.t && Date.now() - c.t < TTL && c.p) return Promise.resolve(c); } catch (e) {}
+    var q = "?content-type=text&include-notes=false&include-titles=false&include-chapter-numbers=false&include-verse-numbers=true&include-verse-spans=false";
+    return apiGet("/bibles/" + NTV.id + "/chapters/" + USFM[idx] + "." + cap + q).then(function (r) {
+      var d = r && r.data ? r.data : {}, m = r && r.meta ? r.meta : {};
+      var obj = { t: Date.now(), p: parsear(d.content), c: d.copyright || "", f: m.fumsToken || m.fumsId || "" };
+      if (!obj.p.orden.length && !obj.p.crudo) throw new Error("vacio");
+      try { localStorage.setItem(clave, JSON.stringify(obj)); } catch (e) {}
+      return obj;
+    });
   }
   function renderReader() {
     var box = $("bReader"), body = $("rBody"), token = ++rToken;
     var idx = Number(sel.value), cap = parseInt($("bCap").value, 10), d = parseInt($("bDesde").value, 10) || 0, h = parseInt($("bHasta").value, 10) || d;
-    var picks = Array.prototype.filter.call(vbox.querySelectorAll("input"), function (i) { return i.checked && AQUI[i.value]; }).map(function (i) { return i.value; });
-    var titulo = LIBROS[idx][0] + " " + cap + (d ? ":" + d + (h > d ? "-" + h : "") : "");
-    $("rTitle").textContent = titulo;
+    var ntvOn = !!vbox.querySelector('input[value="NTV"]:checked');
+    $("rTitle").textContent = LIBROS[idx][0] + " " + cap + (d ? ":" + d + (h > d ? "-" + h : "") : "") + " · NTV";
     $("rPrev").disabled = idx === 0 && cap === 1;
     $("rNext").disabled = idx === 65 && cap === VCOUNT[65].length;
     $("rNote").textContent = "";
-    if (!picks.length) { body.innerHTML = ""; var m0 = document.createElement("p"); m0.className = "reader-msg"; m0.textContent = "Marca Reina-Valera 1909 o King James para leer aquí."; body.appendChild(m0); return; }
-    body.innerHTML = ""; var m1 = document.createElement("p"); m1.className = "reader-msg"; m1.textContent = "Cargando…"; body.appendChild(m1);
-    Promise.all(picks.map(function (v) { return cargarLibro(AQUI[v], idx); })).then(function (libs) {
+    function msg(t, bg) {
+      body.innerHTML = ""; var m = document.createElement("p"); m.className = "reader-msg"; m.textContent = t; body.appendChild(m);
+      if (bg) { var a = document.createElement("a"); a.className = "btn alt small"; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Abrir en BibleGateway"; a.href = "https://www.biblegateway.com/passage/?search=" + encodeURIComponent(LIBROS[idx][1] + " " + cap + (d ? ":" + d + (h > d ? "-" + h : "") : "")) + "&version=NTV"; body.appendChild(a); }
+    }
+    if (!ntvOn) { msg("Marca la NTV para leer aquí."); return; }
+    msg("Cargando…");
+    cargarCapitulo(idx, cap).then(function (o) {
       if (token !== rToken) return;
-      var chaps = libs.map(function (l) { return l[cap - 1] || []; });
-      var max = Math.max.apply(null, chaps.map(function (c) { return c.length; }));
-      var ini = d || 1, fin = d ? Math.min(h, max) : max;
       body.innerHTML = "";
-      for (var n = ini; n <= fin; n++) {
-        var row = document.createElement("div"); row.className = "vrow";
-        var vn = document.createElement("span"); vn.className = "vn"; vn.textContent = n; row.appendChild(vn);
-        var cols = document.createElement("div"); cols.className = "vcols " + (picks.length > 1 ? "mult" : "solo-col"); cols.style.setProperty("--cols", picks.length);
-        picks.forEach(function (v, k) {
-          var p = document.createElement("p"), lab = document.createElement("span"); lab.className = "vlab"; lab.textContent = LAB[v];
-          p.appendChild(lab); p.appendChild(document.createTextNode(chaps[k][n - 1] || "—")); cols.appendChild(p);
+      var p = o.p;
+      if (!p.orden.length) { var raw = document.createElement("p"); raw.textContent = p.crudo; body.appendChild(raw); }
+      else {
+        var ini = d || p.orden[0], fin = d ? Math.min(h, p.orden[p.orden.length - 1]) : p.orden[p.orden.length - 1];
+        p.orden.forEach(function (n) {
+          if (n < ini || n > fin) return;
+          var row = document.createElement("div"); row.className = "vrow";
+          var vn = document.createElement("span"); vn.className = "vn"; vn.textContent = n; row.appendChild(vn);
+          var cols = document.createElement("div"); cols.className = "vcols solo-col";
+          var pp = document.createElement("p"); pp.textContent = p.vs[n]; cols.appendChild(pp); row.appendChild(cols); body.appendChild(row);
         });
-        row.appendChild(cols); body.appendChild(row);
       }
-      $("rNote").textContent = picks.map(function (v) { return LAB[v]; }).join(" y ") + ": textos de dominio público.";
-    }).catch(function () {
+      $("rNote").textContent = (o.c ? o.c + " " : "Nueva Traducción Viviente (NTV). ") + "Texto proporcionado por API.Bible.";
+      fumsVista(o.f);
+    }).catch(function (e) {
       if (token !== rToken) return;
-      body.innerHTML = ""; var m = document.createElement("p"); m.className = "reader-msg"; m.textContent = "No se pudo cargar el texto. Revisa tu conexión e inténtalo de nuevo.";
-      body.appendChild(m);
+      var t = e && e.message === "limite" ? "Hoy se alcanzó el límite de lecturas de la NTV en esta página. Puedes leerla en BibleGateway." :
+              "No se pudo cargar la NTV en este momento. Revisa tu conexión o ábrela en BibleGateway.";
+      msg(t, true);
     });
   }
   $("bRead").addEventListener("click", function () {
