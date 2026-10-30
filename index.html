@@ -414,7 +414,7 @@
   .plan { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
   .plan label { display: flex; gap: 8px; align-items: center; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 9px 10px; cursor: pointer; font-size: 0.93rem; min-width: 0; }
   .plan input { width: 18px; height: 18px; accent-color: var(--accent); flex: none; }
-  .plan a { font-weight: 600; }
+  .plan .pd { background: none; border: 0; padding: 0; font: inherit; font-weight: 600; color: var(--link); text-decoration: underline; cursor: pointer; text-align: left; }
   .plan label.done { background: var(--surface-3); border-color: var(--c2); }
   .oia { display: grid; gap: 12px; }
 
@@ -678,6 +678,7 @@
         <div class="panel">
           <h3>Plan de 21 días en el Evangelio de Juan</h3>
           <p class="hint" id="planTxt"></p>
+          <p class="hint">Toca un día para leerlo aquí mismo en la NTV. Si prefieres otra versión, usa el botón «Otra versión en BibleGateway» que aparece junto al texto.</p>
           <div class="plan" id="planList"></div>
         </div>
       </div>
@@ -686,6 +687,7 @@
         <div class="reader-head">
           <h3 id="rTitle"></h3>
           <div class="reader-nav">
+            <a class="btn alt small" id="rOtra" href="https://www.biblegateway.com/" target="_blank" rel="noopener">Otra versión en BibleGateway ↗</a>
             <button class="btn alt small" type="button" id="rPrev">‹ Capítulo anterior</button>
             <button class="btn alt small" type="button" id="rNext">Capítulo siguiente ›</button>
             <button class="btn alt small" type="button" id="rClose">Cerrar</button>
@@ -1068,6 +1070,8 @@
     var pasaje = libro[1] + " " + cap + (ver ? ":" + ver : "");
     go.href = "https://www.biblegateway.com/passage/?search=" + encodeURIComponent(pasaje) + "&version=" + checked.map(function (i) { return i.value; }).join(";");
     go.removeAttribute("aria-disabled");
+    var vsOtra = checked.map(function (i) { return i.value; }); if (vsOtra.length === 1 && vsOtra[0] === "NTV") vsOtra.push("RVR1960");
+    $("rOtra").href = "https://www.biblegateway.com/passage/?search=" + encodeURIComponent(pasaje) + "&version=" + vsOtra.join(";");
     var info = "Pasaje: " + libro[0] + " " + cap + (ver ? ":" + ver : "") + ".";
     info += aqui.length ? " La NTV se lee aquí." : " Para leer aquí, marca la NTV.";
     info += " " + (checked.length > 1 ? "Las " + checked.length + " versiones marcadas se comparan en BibleGateway." : "Se puede abrir también en BibleGateway.");
@@ -1242,7 +1246,12 @@
   function paintPlan() { var n = planSt.filter(Boolean).length; $("planTxt").textContent = "Un capítulo por día. Llevas " + n + " de 21."; }
   for (var d = 1; d <= 21; d++) (function (d) {
     var l = document.createElement("label"); var c = document.createElement("input"); c.type = "checkbox"; c.checked = !!planSt[d]; if (c.checked) l.className = "done";
-    var a = document.createElement("a"); a.href = "https://www.biblegateway.com/passage/?search=" + encodeURIComponent("John " + d) + "&version=RVR1960"; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Día " + d + " · Juan " + d;
+    var a = document.createElement("button"); a.type = "button"; a.className = "pd"; a.textContent = "Día " + d + " · Juan " + d; a.title = "Leer Juan " + d + " en la NTV";
+    a.addEventListener("click", function () {
+      var ntv = vbox.querySelector('input[value="NTV"]'); ntv.checked = true;
+      sel.value = "42"; fillCaps(d); fillDesde(""); paintBiblia();
+      $("bRead").click();
+    });
     c.addEventListener("change", function () { planSt[d] = c.checked; l.className = c.checked ? "done" : ""; store.set("refugio-plan", planSt); paintPlan(); });
     l.appendChild(c); l.appendChild(a); $("planList").appendChild(l);
   })(d);
