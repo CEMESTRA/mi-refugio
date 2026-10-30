@@ -297,6 +297,30 @@
   .kvoz { max-width: 460px; }
   @media (max-width: 520px) { .kact .btn { flex: 1 1 100%; } .kn { width: 42px; height: 42px; } }
 
+  /* Consultas por tema */
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .cform { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+  .cform input { font: inherit; font-size: 1.05rem; min-height: 52px; padding: 0 18px; border-radius: 999px; border: 2px solid var(--line); background: var(--surface); color: var(--fg); min-width: 0; }
+  .cform input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent); }
+  .cform .btn { width: auto; }
+  @media (max-width: 520px) { .cform { grid-template-columns: 1fr; } .cform .btn { width: 100%; } }
+  .cchips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .cchips button { font: inherit; font-weight: 700; font-size: 0.92rem; cursor: pointer; padding: 8px 16px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); color: var(--fg); min-height: 40px; transition: transform .2s cubic-bezier(.34,1.56,.64,1), border-color .2s, background .2s; }
+  .cchips button:hover { transform: translateY(-3px); border-color: var(--accent); background: var(--surface-2); }
+  .cchips button:active { transform: scale(.94); }
+  .cres { display: grid; gap: 14px; }
+  .cres:empty { display: none; }
+  .chead h3 { margin-bottom: 4px; }
+  .cv { background: var(--surface-2); border-radius: 16px; border-left: 5px solid var(--accent); padding: 14px 16px; display: grid; gap: 8px; animation: cvIn .45s cubic-bezier(.34,1.3,.64,1) both; }
+  @keyframes cvIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .cv .ref { color: var(--accent); font-weight: 800; }
+  .cv .txt { font-family: var(--font-verse); font-size: 1.12rem; line-height: 1.6; max-width: 66ch; }
+  .cv .acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .cv .acts .btn { width: auto; padding: 7px 14px; min-height: 38px; font-size: 0.88rem; }
+  .cv .acts .ok { font-size: 0.85rem; color: var(--muted); }
+  .crel { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  @media (prefers-reduced-motion: reduce) { .cv, .cchips button { animation: none; transition: none; } }
+
   /* Lector de la Biblia */
   .vers label.main span { border-color: var(--accent); }
   .vers label.aqui span::after { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: 0.7; margin-left: 8px; vertical-align: middle; }
@@ -622,6 +646,7 @@
       <a href="#restaura">Volver</a>
       <a href="#jovenes">Jóvenes</a>
       <a href="#ninos">Niños</a>
+      <a href="#consultas">Consultas</a>
       <a href="#biblia">Biblia</a>
       <a href="#testimonios">Testimonios</a>
       <a href="#oracion">Oración</a>
@@ -812,6 +837,27 @@
     </div>
   </section>
 
+  <!-- CONSULTAS -->
+  <section id="consultas" class="sec cons">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Consultas</p>
+        <h2>¿Qué necesitas hoy? Busca un tema</h2>
+        <p>Escribe un tema, como <b>ansiedad</b>, <b>perdón</b> o <b>familia</b>, y te mostramos versículos de la <b>Nueva Traducción Viviente (NTV)</b> para leer aquí mismo.</p>
+      </div>
+      <div class="panel">
+        <form class="cform" id="cForm" role="search" autocomplete="off">
+          <label class="sr" for="cQ">Tema a consultar</label>
+          <input id="cQ" type="search" list="cLista" placeholder="Ej.: ansiedad, perdón, familia…" enterkeyhint="search" maxlength="60">
+          <datalist id="cLista"></datalist>
+          <button class="btn" type="submit">Buscar versículos</button>
+        </form>
+        <div><p class="hint">Temas frecuentes:</p><div class="cchips" id="cChips"></div></div>
+        <div id="cRes" class="cres" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
   <!-- BIBLIA -->
   <section id="biblia" class="sec">
     <div class="wrap">
@@ -963,6 +1009,7 @@
   <a href="#restaura"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v4h4"/></svg>Volver a Dios</a>
   <a href="#jovenes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m13 3-8 11h6l-1 7 8-11h-6z"/></svg>Jóvenes</a>
   <a href="#ninos"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="9" cy="10.5" r=".8"/><circle cx="15" cy="10.5" r=".8"/><path d="M8.5 14.5q3.5 3 7 0"/></svg>Niños</a>
+  <a href="#consultas"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg>Consultas</a>
   <a href="#testimonios"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v10H10l-5 4z"/></svg>Testimonios</a>
 </div>
 
@@ -1404,8 +1451,8 @@
   /* ====== Menú fijo del celular ====== */
   (function () {
     var more = $("moreSheet"), btn = $("tabMore"), tabs = document.querySelectorAll("#tabbar .mtab");
-    var MAPA = { inicio: "inicio", camino: "camino", biblia: "biblia", oracion: "oracion", versiculo: "mas", restaura: "mas", jovenes: "mas", testimonios: "mas" };
-    var ORDEN = ["inicio", "versiculo", "camino", "restaura", "jovenes", "biblia", "testimonios", "oracion"];
+    var MAPA = { inicio: "inicio", camino: "camino", biblia: "biblia", oracion: "oracion", versiculo: "mas", restaura: "mas", jovenes: "mas", ninos: "mas", consultas: "mas", testimonios: "mas" };
+    var ORDEN = ["inicio", "versiculo", "camino", "restaura", "jovenes", "ninos", "consultas", "biblia", "testimonios", "oracion"];
     function cerrar() { more.hidden = true; btn.setAttribute("aria-expanded", "false"); }
     btn.addEventListener("click", function (e) { e.stopPropagation(); var abrir = more.hidden; more.hidden = !abrir; btn.setAttribute("aria-expanded", String(abrir)); });
     more.addEventListener("click", function (e) { if (e.target.closest("a")) cerrar(); });
@@ -1534,6 +1581,158 @@
   }
   $("rPrev").addEventListener("click", function () { irCapitulo(-1); });
   $("rNext").addEventListener("click", function () { irCapitulo(1); });
+
+  /* ====== Consultas por tema (versículos en la NTV) ====== */
+  (function () {
+    var BK = "Gn Ex Lv Nm Dt Jos Jue Rt 1S 2S 1R 2R 1Cr 2Cr Esd Neh Est Job Sal Pr Ec Cnt Is Jer Lm Ez Dn Os Jl Am Abd Jon Mi Nah Hab Sof Hag Zac Mal Mt Mr Lc Jn Hch Ro 1Co 2Co Ga Ef Fil Col 1Ts 2Ts 1Ti 2Ti Tit Flm Heb Stg 1P 2P 1Jn 2Jn 3Jn Jud Ap".split(" ");
+    function norm(t) { return String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim(); }
+    function T(claves, titulo, intro, refs) { return { k: claves.split(",").map(norm), t: titulo, i: intro, r: refs.split(";").map(function (x) { var m = x.trim().match(/^(\S+)\s+(\d+):(\d+)(?:-(\d+))?$/); return m ? [BK.indexOf(m[1]), +m[2], +m[3], +(m[4] || m[3])] : null; }).filter(Boolean) }; }
+    var TEMAS = [
+      T("ansiedad,ansioso,preocupacion,preocupado,estres,nervios,agobio,afan,angustia,intranquilo", "Ansiedad y preocupación", "Dios te invita a entregarle lo que te inquieta.", "Fil 4:6-7; 1P 5:7; Mt 6:31-34; Sal 94:19; Is 26:3; Sal 55:22; Jn 14:27"),
+      T("miedo,temor,asustado,susto,pavor,cobardia,terror", "Miedo y temor", "Dios no te deja solo ante lo que te asusta.", "Is 41:10; Sal 27:1; Jos 1:9; 2Ti 1:7; Sal 56:3-4; Dt 31:6; Sal 23:4"),
+      T("perdon,perdonar,resentimiento,rencor,amargura,ofensa,reconciliar", "Perdón", "Dios nos perdona y nos enseña a perdonar.", "Ef 4:32; Col 3:13; Mt 6:14-15; 1Jn 1:9; Sal 103:12; Lc 6:37; Mt 18:21-22"),
+      T("esperanza,desesperanza,desanimo,animo,desanimado,ilusion,rendirme", "Esperanza", "Con Dios siempre hay un mañana.", "Ro 15:13; Jer 29:11; Lm 3:22-23; Sal 42:11; Heb 11:1; Ro 8:28; Is 40:31"),
+      T("tristeza,triste,llanto,llorar,dolor,depresion,deprimido,sufrimiento,sufrir,lagrimas,quebrantado", "Tristeza y dolor", "Dios está cerca de los que tienen el corazón herido.", "Sal 34:18; Sal 147:3; Mt 11:28-30; Ap 21:4; Sal 30:5; 2Co 1:3-4; Jn 16:33"),
+      T("paz,tranquilidad,calma,descanso,descansar,sosiego,serenidad", "Paz", "La paz de Dios es distinta a la del mundo.", "Jn 14:27; Jn 16:33; Col 3:15; Sal 4:8; Nm 6:24-26; Mt 11:28; Ro 5:1"),
+      T("fuerza,fortaleza,debil,debilidad,cansancio,cansado,agotado,agotamiento,valentia,valiente", "Fortaleza", "Dios da fuerzas al cansado.", "Is 40:29-31; Fil 4:13; Sal 46:1; 2Co 12:9; Ef 6:10; Neh 8:10; Sal 28:7"),
+      T("fe,confianza,confiar,duda,dudas,creer,incredulidad", "Fe y confianza", "Confiar en Dios aunque no veamos todavía.", "Heb 11:1; Pr 3:5-6; Mr 9:23-24; Ro 10:17; 2Co 5:7; Mt 17:20; Stg 1:5-6"),
+      T("amor,amar,amado,carino,querido,amor de dios", "El amor de Dios", "Dios te ama tal como eres.", "Jn 3:16; 1Jn 4:7-8; 1Co 13:4-7; Ro 8:38-39; Jn 15:13; 1Jn 4:19; Ef 3:17-19"),
+      T("salvacion,salvar,salvo,jesus,cristo,evangelio,vida eterna,arrepentimiento,conversion,aceptar a jesus,nacer de nuevo,pecador", "Salvación en Jesús", "Jesús es el camino que Dios abrió para ti.", "Ro 10:9-10; Ef 2:8-9; Jn 14:6; Hch 4:12; Ro 6:23; Ap 3:20; 2Co 5:17"),
+      T("oracion,orar,rezar,pedir,hablar con dios", "Oración", "Puedes hablar con Dios en cualquier momento.", "Mt 6:9-13; Mr 11:24; Jer 33:3; 1Ts 5:16-18; Stg 5:16; Lc 11:9-10; Heb 4:16"),
+      T("familia,hijos,padres,matrimonio,esposo,esposa,hogar,casa,pareja,hijo", "Familia y hogar", "Dios cuida a las familias que se aman.", "Jos 24:15; Sal 127:3; Pr 22:6; Ef 6:1-4; Col 3:18-21; Sal 128:1-3; Ef 5:25"),
+      T("sabiduria,sabio,decision,decisiones,decidir,direccion,guia,consejo,rumbo,confundido", "Sabiduría y dirección", "Dios guía a quien se lo pide.", "Stg 1:5; Pr 2:6; Sal 32:8; Pr 16:3; Sal 119:105; Pr 4:7; Pr 3:5-6"),
+      T("dinero,provision,necesidad,trabajo,pobreza,deuda,deudas,economia,sustento,empleo,desempleo", "Provisión y trabajo", "Dios cuida de lo que necesitas.", "Fil 4:19; Mt 6:33; Sal 37:25; Sal 23:1; 1Ti 6:6-8; Col 3:23; Pr 3:9-10"),
+      T("salud,enfermedad,sanidad,sanar,enfermo,curacion,sanacion", "Salud y sanidad", "Puedes poner tu salud en las manos de Dios.", "Jer 17:14; Sal 103:2-3; Is 53:5; Stg 5:14-15; Ex 15:26; 3Jn 1:2; Sal 41:3"),
+      T("soledad,solo,sola,abandono,abandonado,rechazo,rechazado,olvidado", "Soledad", "No estás solo: Dios está contigo.", "Dt 31:8; Mt 28:20; Sal 68:5-6; Is 49:15-16; Sal 27:10; Heb 13:5; Jn 14:18"),
+      T("gratitud,gracias,agradecer,agradecimiento,alabanza,adorar,adoracion,alegria,gozo,feliz,felicidad", "Gratitud y alegría", "Dar gracias abre el corazón.", "1Ts 5:18; Sal 100:4-5; Sal 107:1; Sal 118:24; Fil 4:4; Sal 103:1-2; Sal 16:11"),
+      T("tentacion,pecado,vicio,vicios,adiccion,culpa,verguenza,caida,error", "Tentación y culpa", "Dios da salida y nueva oportunidad.", "1Co 10:13; Stg 4:7; Sal 51:10; Ro 8:1; Heb 4:15-16; Ga 5:16; Sal 119:9-11"),
+      T("enojo,ira,rabia,coraje,enfado,furia,molesto,odio", "Enojo e ira", "Dios nos ayuda a calmar el corazón.", "Ef 4:26-27; Pr 15:1; Stg 1:19-20; Pr 29:11; Col 3:8; Pr 16:32; Ro 12:19"),
+      T("duelo,muerte,fallecimiento,perdida,luto,murio,fallecio,difunto", "Duelo y pérdida", "Dios consuela a quien llora una pérdida.", "Jn 11:25-26; Sal 23:4; 1Ts 4:13-14; Ap 21:4; Mt 5:4; Sal 116:15; Ro 8:38-39"),
+      T("proposito,vocacion,llamado,futuro,planes,suenos,metas,vida,para que vivo,sentido", "Propósito y futuro", "Dios tiene un plan bueno para ti.", "Pr 19:21; Ef 2:10; Sal 138:8; Fil 1:6; Sal 37:4-5; Jer 29:11; Ro 8:28"),
+      T("joven,jovenes,juventud,identidad,autoestima,valor,inseguridad,baja autoestima,adolescente", "Identidad y juventud", "Eres valioso para Dios.", "1Ti 4:12; Sal 139:13-14; Ec 12:1; 1P 2:9; Sal 119:9; Jer 1:5; Is 43:1"),
+      T("proteccion,proteger,seguridad,refugio,peligro,cuidado,guarda,amenaza", "Protección", "Dios es refugio y escudo.", "Sal 91:1-2; Sal 121:7-8; Pr 18:10; Sal 46:1; Is 43:2; 2Ts 3:3; Sal 32:7"),
+      T("injusticia,envidia,venganza,traicion,calumnia,enemigos,burla,maltrato,bullying,persecucion", "Injusticia y enemigos", "Dios ve y defiende, y nos enseña a responder con bien.", "Ro 12:19-21; Mt 5:44; Is 54:17; Sal 34:19; Sal 37:1-3; Pr 24:19; Sal 56:3-4"),
+      T("paciencia,esperar,espera,tardanza,tiempo de dios,impaciencia", "Paciencia y espera", "El tiempo de Dios es perfecto.", "Sal 27:14; Is 40:31; Stg 5:7-8; Ec 3:1; Sal 37:7; Lm 3:25-26; Hab 2:3"),
+      T("humildad,orgullo,soberbia,arrogancia,egoismo", "Humildad", "Dios se acerca a los humildes.", "Stg 4:6; Pr 16:18; Fil 2:3-4; Mi 6:8; Mt 23:12; 1P 5:6; Pr 11:2"),
+      T("dar,generosidad,generoso,ofrenda,diezmo,compartir,ayudar,servir,servicio", "Generosidad y servicio", "Dar con alegría es una bendición.", "2Co 9:7; Pr 11:25; Hch 20:35; Lc 6:38; Mt 6:3-4; Pr 19:17; Ga 6:9"),
+      T("espiritu santo,consolador,bautismo,llenura,dones", "El Espíritu Santo", "Dios vive en nosotros y nos ayuda.", "Jn 14:26; Hch 1:8; Ga 5:22-23; Ro 8:26; Jn 16:13; Ef 5:18; Ro 8:14"),
+      T("biblia,palabra de dios,escritura,escrituras,leer la biblia,estudiar", "La Palabra de Dios", "La Biblia alumbra el camino.", "2Ti 3:16-17; Sal 119:105; Heb 4:12; Jos 1:8; Is 40:8; Mt 4:4; Sal 119:11"),
+      T("dormir,insomnio,sueno,noche,pesadillas,desvelo,desvelado", "Dormir en paz", "Dios cuida tu descanso.", "Sal 127:2; Pr 3:24; Sal 3:5; Sal 4:8; Sal 121:3-4; Mt 11:28; Sal 91:5-6"),
+      T("amigo,amigos,amistad,companerismo,companero", "Amistad", "Los buenos amigos son un regalo.", "Pr 17:17; Ec 4:9-10; Pr 27:17; Pr 18:24; Jn 15:13; Pr 27:9; Ro 12:10"),
+      T("evangelizar,testimonio,compartir mi fe,mision,predicar,hablar de dios,discipulo", "Compartir la fe", "Contarle a otros lo que Dios hizo en ti.", "Mt 28:19-20; Ro 1:16; 1P 3:15; Mr 16:15; Mt 5:14-16; Hch 1:8; Sal 107:2"),
+      T("fracaso,fracasar,fallar,equivocacion,segunda oportunidad,empezar de nuevo,nuevo comienzo", "Segundas oportunidades", "Con Dios siempre se puede volver a empezar.", "Lm 3:22-23; Is 43:18-19; 2Co 5:17; Fil 3:13-14; Mi 7:8; Pr 24:16; Sal 37:23-24"),
+      T("lujuria,pureza,sexo,pornografia,castidad,noviazgo,tentacion sexual", "Pureza y noviazgo", "Dios cuida nuestro corazón y nuestras relaciones.", "Sal 119:9-11; 1Co 6:18-20; 1Ts 4:3-5; Pr 4:23; Mt 5:8; 2Ti 2:22; Cnt 8:4")
+    ];
+    var FREC = ["ansiedad", "miedo", "perdón", "esperanza", "tristeza", "paz", "fortaleza", "fe", "familia", "soledad", "propósito", "protección"];
+    var esc = function (s) { return s; };
+    function buscar(q) {
+      var nq = norm(q), words = nq.split(" ").filter(function (w) { return w.length >= 4; }), res = [];
+      TEMAS.forEach(function (t) {
+        var sc = 0;
+        t.k.forEach(function (k) {
+          if (!k) return;
+          if ((" " + nq + " ").indexOf(" " + k + " ") > -1) sc += k.length + 4;
+          else if (k.length >= 4) words.forEach(function (w) { if (k.indexOf(w) === 0 || w.indexOf(k) === 0) sc += Math.min(k.length, w.length); });
+        });
+        if (sc > 0) res.push([sc, t]);
+      });
+      res.sort(function (a, b) { return b[0] - a[0]; });
+      return res.map(function (x) { return x[1]; });
+    }
+    var memo = {};
+    function capitulo(idx, cap) { var k = idx + ":" + cap; if (!memo[k]) memo[k] = cargarCapitulo(idx, cap).catch(function (e) { delete memo[k]; throw e; }); return memo[k]; }
+    function extraer(o, d, h) {
+      var p = o.p; if (!p.orden.length) return p.crudo;
+      var out = []; p.orden.forEach(function (n) { if (n >= d && n <= h) out.push(p.vs[n]); });
+      return out.join(" ");
+    }
+    function nombre(r) { return LIBROS[r[0]][0] + " " + r[1] + ":" + r[2] + (r[3] > r[2] ? "-" + r[3] : ""); }
+    function abrirLector(idx, cap, d, h) {
+      var ntv = vbox.querySelector('input[value="NTV"]'); if (ntv) ntv.checked = true;
+      sel.value = String(idx); fillCaps(cap); fillDesde(d || ""); if (d) fillHasta(h || d); paintBiblia(); $("bRead").click();
+    }
+    function tarjeta(ref, texto, idx, cap, d, h) {
+      var c = document.createElement("div"); c.className = "cv";
+      var r = document.createElement("div"); r.className = "ref"; r.textContent = ref + " · NTV"; c.appendChild(r);
+      var t = document.createElement("p"); t.className = "txt"; t.textContent = texto || "Cargando…"; c.appendChild(t);
+      var a = document.createElement("div"); a.className = "acts"; c.appendChild(a);
+      var ok = document.createElement("span"); ok.className = "ok"; ok.setAttribute("role", "status");
+      var b1 = document.createElement("button"); b1.type = "button"; b1.className = "btn alt small"; b1.textContent = "Leer el capítulo"; b1.addEventListener("click", function () { abrirLector(idx, cap, d, h); });
+      var b2 = document.createElement("button"); b2.type = "button"; b2.className = "btn alt small"; b2.textContent = "Copiar"; b2.addEventListener("click", function () { copyText("“" + t.textContent + "”\n" + ref + " (NTV)\n\nMi Refugio · mirefugioencristo.com", ok, "Copiado ✓"); });
+      var b3 = document.createElement("a"); b3.className = "btn wa small"; b3.target = "_blank"; b3.rel = "noopener"; b3.appendChild(waIcon()); b3.appendChild(document.createTextNode("WhatsApp"));
+      a.appendChild(b1); a.appendChild(b2); a.appendChild(b3); a.appendChild(ok);
+      c._set = function (txt) { t.textContent = txt; b3.href = "https://wa.me/?text=" + encodeURIComponent("“" + txt + "”\n" + ref + " (NTV)\n\nMi Refugio · mirefugioencristo.com"); };
+      c._err = function (msg) { t.textContent = msg; var g = document.createElement("a"); g.className = "btn alt small"; g.target = "_blank"; g.rel = "noopener"; g.textContent = "Abrir en BibleGateway"; g.href = "https://www.biblegateway.com/passage/?search=" + encodeURIComponent(LIBROS[idx][1] + " " + cap + ":" + d + (h > d ? "-" + h : "")) + "&version=NTV"; a.insertBefore(g, a.firstChild); b2.hidden = true; b3.hidden = true; };
+      if (texto) c._set(texto);
+      return c;
+    }
+    var nota = null;
+    function cargarTema(t, cont, desde, hasta, boton) {
+      var lote = t.r.slice(desde, hasta), sig = Promise.resolve();
+      lote.forEach(function (r) {
+        var card = tarjeta(nombre(r), "", r[0], r[1], r[2], r[3]); cont.insertBefore(card, boton || null);
+        sig = sig.then(function () {
+          return capitulo(r[0], r[1]).then(function (o) {
+            card._set(extraer(o, r[2], r[3])); fumsVista(o.f);
+            if (nota && !nota.textContent) nota.textContent = (o.c ? o.c + " " : "Nueva Traducción Viviente (NTV). ") + "Texto proporcionado por API.Bible.";
+          }).catch(function (e) {
+            var m = e && e.message === "limite" ? "Hoy se alcanzó el límite de lecturas de la NTV en esta página. Puedes leerlo en BibleGateway." : e && e.message === "auth" ? "El servicio de la NTV no respondió por ahora. Puedes leerlo en BibleGateway." : "No se pudo cargar este versículo. Revisa tu conexión o ábrelo en BibleGateway.";
+            card._err(m);
+          });
+        });
+      });
+    }
+    function mostrarTema(t, relacionados) {
+      var box = $("cRes"); box.innerHTML = "";
+      var h = document.createElement("div"); h.className = "chead";
+      var h3 = document.createElement("h3"); h3.textContent = t.t; var p = document.createElement("p"); p.className = "hint"; p.textContent = t.i; h.appendChild(h3); h.appendChild(p); box.appendChild(h);
+      var lista = document.createElement("div"); lista.className = "cres"; box.appendChild(lista);
+      var mas = document.createElement("button"); mas.type = "button"; mas.className = "btn alt small"; mas.style.justifySelf = "start";
+      var mostrados = 4;
+      function actualizar() { var resta = t.r.length - mostrados; mas.hidden = resta <= 0; mas.textContent = "Ver más versículos (" + resta + ")"; }
+      mas.addEventListener("click", function () { var d = mostrados; mostrados = Math.min(t.r.length, mostrados + 4); cargarTema(t, lista, d, mostrados, null); actualizar(); });
+      nota = document.createElement("p"); nota.className = "hint";
+      box.appendChild(mas); box.appendChild(nota); actualizar();
+      if (relacionados && relacionados.length) {
+        var rel = document.createElement("div"); rel.className = "crel"; var l = document.createElement("span"); l.className = "hint"; l.textContent = "Temas relacionados:"; rel.appendChild(l);
+        var wrap = document.createElement("div"); wrap.className = "cchips"; relacionados.forEach(function (x) { var b = document.createElement("button"); b.type = "button"; b.textContent = x.t; b.addEventListener("click", function () { $("cQ").value = x.t; mostrarTema(x, buscar(x.t).filter(function (y) { return y !== x; }).slice(0, 3)); }); wrap.appendChild(b); });
+        rel.appendChild(wrap); box.insertBefore(rel, nota);
+      }
+      cargarTema(t, lista, 0, mostrados, null);
+    }
+    function sinTema(q) {
+      var box = $("cRes"); box.innerHTML = ""; var h = document.createElement("div"); h.className = "chead";
+      var h3 = document.createElement("h3"); h3.textContent = "Buscando «" + q + "» en la NTV…"; h.appendChild(h3); box.appendChild(h);
+      var lista = document.createElement("div"); lista.className = "cres"; box.appendChild(lista);
+      nota = document.createElement("p"); nota.className = "hint"; box.appendChild(nota);
+      function fallo(msg) {
+        h3.textContent = "No encontramos un tema con «" + q + "»";
+        var p = document.createElement("p"); p.className = "hint"; p.textContent = msg || "Prueba con otra palabra, por ejemplo: ansiedad, perdón, familia, fe o esperanza."; h.appendChild(p);
+        var a = document.createElement("a"); a.className = "btn alt small"; a.target = "_blank"; a.rel = "noopener"; a.style.justifySelf = "start"; a.textContent = "Buscar «" + q + "» en BibleGateway (NTV)"; a.href = "https://www.biblegateway.com/quicksearch/?quicksearch=" + encodeURIComponent(q) + "&version=NTV"; box.insertBefore(a, nota);
+      }
+      apiGet("/bibles/" + NTV.id + "/search?query=" + encodeURIComponent(q) + "&limit=8&sort=relevance").then(function (r) {
+        var vs = r && r.data && r.data.verses ? r.data.verses : [];
+        if (!vs.length) { fallo(); return; }
+        h3.textContent = "Versículos de la NTV con «" + q + "»";
+        vs.forEach(function (v) {
+          var m = String(v.id || "").match(/^([0-9A-Z]{3})\.(\d+)\.(\d+)/), idx = m ? USFM.indexOf(m[1]) : -1;
+          var ref = v.reference || "", txt = String(v.text || "").replace(/\s+/g, " ").trim();
+          var c = tarjeta(ref, txt, idx < 0 ? 0 : idx, m ? +m[2] : 1, m ? +m[3] : 0, m ? +m[3] : 0); if (idx < 0) c.querySelector(".btn").hidden = true; lista.appendChild(c);
+        });
+        var meta = r.meta || {}; fumsVista(meta.fumsToken || meta.fumsId || ""); nota.textContent = "Nueva Traducción Viviente (NTV). Texto proporcionado por API.Bible.";
+      }).catch(function () { fallo("No pudimos buscar en este momento. Prueba con otro tema o búscalo en BibleGateway."); });
+    }
+    function consultar(q) {
+      q = String(q || "").trim(); if (!q) { $("cRes").innerHTML = ""; $("cQ").focus(); return; }
+      var m = buscar(q);
+      if (m.length) mostrarTema(m[0], m.slice(1, 4)); else sinTema(q);
+      var r = $("cRes"); if (r.scrollIntoView) r.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+    var chips = $("cChips"), dl = $("cLista");
+    FREC.forEach(function (n) { var b = document.createElement("button"); b.type = "button"; b.textContent = n.charAt(0).toUpperCase() + n.slice(1); b.addEventListener("click", function () { $("cQ").value = n; consultar(n); }); chips.appendChild(b); });
+    TEMAS.forEach(function (t) { var o = document.createElement("option"); o.value = t.t; dl.appendChild(o); });
+    $("cForm").addEventListener("submit", function (e) { e.preventDefault(); consultar($("cQ").value); try { $("cQ").blur(); } catch (x) {} });
+  })();
 
   /* ====== Plan Juan 21 días ====== */
   var planSt = store.get("refugio-plan") || [];
