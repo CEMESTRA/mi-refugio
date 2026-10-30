@@ -352,37 +352,34 @@
     body { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
     .fab-wrap { bottom: calc(100px + env(safe-area-inset-bottom, 0px)) !important; }
     .tabbar {
-      display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); position: fixed; left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); z-index: 45;
-      background: color-mix(in srgb, var(--surface) 90%, transparent); -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4);
-      border: 1px solid var(--line); border-radius: 28px; padding: 6px;
-      box-shadow: 0 14px 34px rgba(20,17,28,0.22), 0 2px 6px rgba(20,17,28,0.10);
-      animation: tabIn .6s cubic-bezier(.34,1.4,.64,1) both;
+      display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; position: fixed; left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); z-index: 45;
+      background: none; border: 0; padding: 0; pointer-events: none;
     }
-    @keyframes tabIn { from { transform: translateY(120%); opacity: 0; } to { transform: none; opacity: 1; } }
-    .tabind {
-      position: absolute; top: 6px; bottom: 6px; left: 0; width: 0; border-radius: 22px; pointer-events: none;
-      background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 24%, transparent), color-mix(in srgb, var(--accent) 8%, transparent));
-      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent);
-      transition: transform .5s cubic-bezier(.34,1.35,.64,1), width .35s ease, opacity .3s;
-    }
+    .tabind { display: none; }
     .mtab {
-      position: relative; z-index: 1; overflow: hidden; display: grid; justify-items: center; align-content: center; gap: 3px; min-height: 56px; padding: 6px 2px;
-      border: 0; background: none; color: var(--muted); font: inherit; font-size: 0.7rem; font-weight: 700; letter-spacing: 0;
-      text-decoration: none; cursor: pointer; border-radius: 22px; -webkit-tap-highlight-color: transparent;
-      transition: transform .22s cubic-bezier(.34,1.56,.64,1), color .25s;
+      position: relative; overflow: hidden; pointer-events: auto; display: grid; justify-items: center; align-content: center; gap: 3px; min-height: 58px; padding: 6px 2px;
+      border: 1px solid var(--line); color: var(--muted); font: inherit; font-size: 0.7rem; font-weight: 700; letter-spacing: 0;
+      background: color-mix(in srgb, var(--surface) 97%, transparent); -webkit-backdrop-filter: blur(14px) saturate(1.4); backdrop-filter: blur(14px) saturate(1.4);
+      box-shadow: 0 10px 22px rgba(20,17,28,0.20), 0 2px 5px rgba(20,17,28,0.10);
+      border-radius: 22px; text-decoration: none; cursor: pointer; -webkit-tap-highlight-color: transparent;
+      animation: mtabIn .6s cubic-bezier(.34,1.5,.64,1) both, mtabFloat 4.2s ease-in-out 1s infinite;
+      transition: transform .22s cubic-bezier(.34,1.56,.64,1), color .25s, background .3s, border-color .3s, box-shadow .3s;
     }
-    .mtab:active { transform: scale(.88); }
+    .tabbar > :nth-child(2) { animation-delay: .00s, 1.0s; } .tabbar > :nth-child(3) { animation-delay: .07s, 1.6s; } .tabbar > :nth-child(4) { animation-delay: .14s, 2.2s; } .tabbar > :nth-child(5) { animation-delay: .21s, 2.8s; } .tabbar > :nth-child(6) { animation-delay: .28s, 3.4s; }
+    @keyframes mtabIn { from { transform: translateY(140%) scale(.6); opacity: 0; } to { transform: none; opacity: 1; } }
+    @keyframes mtabFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    .mtab:active { animation-play-state: running, paused; transform: scale(.86); }
     .mtab svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: transform .45s cubic-bezier(.34,1.8,.64,1); }
-    .mtab span { transition: transform .3s, letter-spacing .3s; }
-    .mtab.on { color: var(--accent); }
-    .mtab.on svg { transform: translateY(-3px) scale(1.2); animation: mtabBob 2.6s ease-in-out .5s infinite; stroke-width: 2.1; }
-    .mtab.on span { transform: translateY(-1px); }
-    @keyframes mtabBob { 0%, 100% { transform: translateY(-3px) scale(1.2); } 50% { transform: translateY(-6px) scale(1.2); } }
+    .mtab.on { color: #fff; background: linear-gradient(160deg, var(--accent), color-mix(in srgb, var(--accent) 70%, #14111C)); border-color: transparent; box-shadow: 0 12px 26px color-mix(in srgb, var(--accent) 55%, transparent), 0 2px 6px rgba(20,17,28,0.18); }
+    .mtab.on svg { transform: scale(1.18); stroke-width: 2.1; }
+    html[data-theme="dark"] .mtab.on { color: #14111C; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mtab.on { color: #14111C; } }
     .mtab[aria-expanded="true"] svg { transform: rotate(90deg) scale(1.15); }
     .mtab .rip { position: absolute; border-radius: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px; background: var(--accent); opacity: .35; pointer-events: none; animation: rip .6s ease-out forwards; }
+    .mtab.on .rip { background: #fff; }
     @keyframes rip { to { transform: scale(14); opacity: 0; } }
     .more-sheet {
-      display: grid; gap: 6px; position: fixed; z-index: 44; left: 12px; right: 12px; bottom: calc(92px + env(safe-area-inset-bottom, 0px));
+      display: grid; gap: 6px; position: fixed; z-index: 44; left: 12px; right: 12px; bottom: calc(84px + env(safe-area-inset-bottom, 0px));
       transform-origin: 90% 100%; animation: sheetIn .35s cubic-bezier(.34,1.45,.64,1) both;
       background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 12px; box-shadow: 0 18px 48px rgba(20,17,28,0.28);
       grid-template-columns: 1fr 1fr;
