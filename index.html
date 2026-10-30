@@ -341,15 +341,9 @@
   .vers label.aqui span::after { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: 0.7; margin-left: 8px; vertical-align: middle; }
   .reader { scroll-margin-top: 90px; }
   .reader-head { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-  .reader-audio { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin: 0 0 14px; padding: 12px 14px; border-radius: 16px; background: var(--surface-2); }
-  .reader-audio .btn { width: auto; }
-  .reader-audio label { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.92rem; }
-  .reader-audio select { font: inherit; font-size: 0.9rem; padding: 6px 10px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--surface); color: var(--fg); max-width: 200px; }
-  .vrow.leyendo { background: color-mix(in srgb, var(--accent) 14%, transparent); border-radius: 12px; box-shadow: -4px 0 0 var(--accent); }
-  .vrow { transition: background .25s; }
   .reader-nav { display: flex; flex-wrap: wrap; gap: 8px; }
   .reader-nav .btn { width: auto; flex: 1 1 auto; padding: 9px 12px; min-height: 42px; font-size: 0.9rem; }
-  @media (max-width: 520px) { .reader-nav { width: 100%; } .reader-nav .btn { flex: 1 1 30%; padding: 9px 6px; border-radius: 16px; font-size: 0.84rem; line-height: 1.2; } .reader-audio .btn { width: 100%; } }
+  @media (max-width: 520px) { .reader-nav { width: 100%; } .reader-nav .btn { flex: 1 1 30%; padding: 9px 6px; } }
   .reader-body { display: grid; gap: 0; }
   .vrow { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr); gap: 4px 6px; padding: 12px 0; border-top: 1px solid var(--line); }
   .vrow:first-child { border-top: 0; }
@@ -907,12 +901,6 @@
             <button class="btn alt small" type="button" id="rNext">Capítulo siguiente ›</button>
             <button class="btn alt small" type="button" id="rClose">Cerrar</button>
           </div>
-        </div>
-        <div class="reader-audio" id="rAudio" hidden>
-          <button class="btn small" id="rListen" type="button">🔊 Escuchar</button>
-          <label class="rchk"><input type="checkbox" id="rSeguir" checked> Seguir con el siguiente capítulo y libro</label>
-          <label class="rsel" id="rVozBox" hidden>Voz <select id="rVoz"></select></label>
-          <label class="rsel">Velocidad <select id="rVel"><option value="0.8">Lenta</option><option value="0.9" selected>Normal</option><option value="1.05">Rápida</option></select></label>
         </div>
         <div id="rBody" class="reader-body"></div>
         <p class="hint" id="rNote"></p>
@@ -1627,10 +1615,8 @@
       }
       $("rNote").textContent = (o.c ? o.c + " " : "Nueva Traducción Viviente (NTV). ") + "Texto proporcionado por API.Bible.";
       fumsVista(o.f);
-      alCargarCap(!!d);
     }).catch(function (e) {
       if (token !== rToken) return;
-      pararEsc();
       var t = e && e.message === "limite" ? "Hoy se alcanzó el límite de lecturas de la NTV en esta página. Puedes leerla en BibleGateway." :
               e && e.message === "auth" ? "El servicio de la NTV no aceptó la conexión de esta página por ahora. Puedes leerla en BibleGateway." :
               "No se pudo cargar la NTV en este momento. Revisa tu conexión o ábrela en BibleGateway.";
@@ -1641,7 +1627,7 @@
     $("bReader").hidden = false; renderReader();
     var r = $("bReader"); if (r.scrollIntoView) r.scrollIntoView({ behavior: "smooth", block: "start" });
   });
-  $("rClose").addEventListener("click", function () { pararEsc(); $("bReader").hidden = true; $("bRead").focus(); });
+  $("rClose").addEventListener("click", function () { $("bReader").hidden = true; $("bRead").focus(); });
   function irCapitulo(delta) {
     var i = Number(sel.value), c = parseInt($("bCap").value, 10) + delta;
     if (c < 1) { if (i === 0) return; i--; c = VCOUNT[i].length; }
@@ -2181,16 +2167,6 @@
     }
     function vozActual() { var vs = vocesEs(), n = $("kVoz").value; for (var i = 0; i < vs.length; i++) if (vs[i].name === n) return vs[i]; return vs[0] || null; }
     if (TTS) { poblarVoces(); try { window.speechSynthesis.onvoiceschanged = poblarVoces; } catch (e) {} }
-    window.RV = {
-      tts: TTS,
-      actual: function (nombre) { var vs = vocesEs(); for (var i = 0; i < vs.length; i++) if (vs[i].name === nombre) return vs[i]; return vs[0] || null; },
-      poblar: function (sl) {
-        var vs = vocesEs(), g = store2.get("refugio-voz") || ""; sl.innerHTML = "";
-        var o0 = document.createElement("option"); o0.value = ""; o0.textContent = "Automática"; sl.appendChild(o0);
-        vs.forEach(function (v) { var o = document.createElement("option"); o.value = v.name; o.textContent = v.name; sl.appendChild(o); });
-        sl.value = g; if (sl.value !== g) sl.value = ""; return vs.length;
-      }
-    };
     $("kVoz").addEventListener("change", function () { store2.set("refugio-voz", $("kVoz").value); if (hablando) { var e0 = esc; parar(); esc = e0; empezar(); } });
     function trozos(t) { return t.match(/[^.!?…]+[.!?…»]*\s*/g) || [t]; }
     function hablar(txt, token, fin) {
@@ -2230,72 +2206,6 @@
     $("kListen").addEventListener("click", function () { if (hablando) { parar(); return; } empezar(); });
     window.addEventListener("pagehide", parar);
     abrir(hoy(), false);
-  })();
-
-  /* ====== Escuchar la Biblia (voz del dispositivo) y seguir al siguiente capítulo ====== */
-  var Esc = { on: false, tk: 0, lock: null };
-  function pararEsc() {
-    Esc.on = false; Esc.tk++;
-    try { window.speechSynthesis.cancel(); } catch (e) {}
-    try { if (Esc.lock) { Esc.lock.release(); Esc.lock = null; } } catch (e) {}
-    var b = $("rListen"); if (b) b.textContent = "🔊 Escuchar";
-    Array.prototype.forEach.call(document.querySelectorAll(".vrow.leyendo"), function (r) { r.classList.remove("leyendo"); });
-  }
-  function hablarTexto(txt, tk, fin) {
-    var vel = parseFloat($("rVel").value) || 0.9, v = window.RV ? window.RV.actual(($("rVoz").value || "")) : null;
-    var cola = (txt.match(/[^.!?…;:]+[.!?…;:]*\s*/g) || [txt]).map(function (x) { return x.trim(); }).filter(Boolean);
-    (function sig() {
-      if (tk !== Esc.tk) return;
-      var c = cola.shift(); if (!c) { fin(); return; }
-      var u = new SpeechSynthesisUtterance(c), hecho = false, tm;
-      if (v) { u.voice = v; u.lang = v.lang; } else u.lang = "es-419";
-      u.rate = vel; u.pitch = 1.03;
-      function ok() { if (hecho) return; hecho = true; clearTimeout(tm); if (tk === Esc.tk) setTimeout(sig, 120); }
-      u.onend = u.onerror = ok;
-      tm = setTimeout(function () { if (!hecho) { try { window.speechSynthesis.cancel(); } catch (e) {} ok(); } }, Math.max(6000, c.length * 190 / vel));
-      window.speechSynthesis.speak(u);
-    })();
-  }
-  function alCargarCap(rango) {
-    if (!Esc.on) return;
-    var tk = ++Esc.tk, filas = Array.prototype.slice.call(document.querySelectorAll("#rBody .vrow")), idx = Number(sel.value), cap = parseInt($("bCap").value, 10);
-    if (!filas.length) { var p0 = document.querySelector("#rBody p"); if (p0) filas = [p0.parentNode]; }
-    var sigI = idx, sigC = cap + 1; if (sigC > VCOUNT[idx].length) { sigI = idx + 1; sigC = 1; }
-    if (sigI <= 65) cargarCapitulo(sigI, sigC).catch(function () {});
-    $("rListen").textContent = "⏹ Detener";
-    var i = 0, intro = LIBROS[idx][0] + ", capítulo " + cap + ".";
-    function fila() {
-      if (tk !== Esc.tk) return;
-      Array.prototype.forEach.call(document.querySelectorAll(".vrow.leyendo"), function (r) { r.classList.remove("leyendo"); });
-      if (i >= filas.length) { terminarCap(); return; }
-      var f = filas[i++]; f.classList.add("leyendo"); try { f.scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {}
-      var p = f.querySelector("p") || f; hablarTexto(p.textContent, tk, fila);
-    }
-    function terminarCap() {
-      if (rango || !$("rSeguir").checked || (idx === 65 && cap === VCOUNT[65].length)) { pararEsc(); return; }
-      hablarTexto("Fin del capítulo.", tk, function () { if (tk === Esc.tk) irCapitulo(1); });
-    }
-    hablarTexto(intro, tk, fila);
-  }
-  (function () {
-    var box = $("rAudio"); if (!box) return;
-    function iniciar() {
-      if (!window.RV || !window.RV.tts) return;
-      box.hidden = false;
-      var n = window.RV.poblar($("rVoz")); $("rVozBox").hidden = n < 2;
-      try { window.speechSynthesis.onvoiceschanged = function () { var n2 = window.RV.poblar($("rVoz")); $("rVozBox").hidden = n2 < 2; }; } catch (e) {}
-      $("rVoz").addEventListener("change", function () { store.set("refugio-voz", $("rVoz").value); });
-    }
-    iniciar();
-    $("rListen").addEventListener("click", function () {
-      if (Esc.on) { pararEsc(); return; }
-      Esc.on = true; try { if (navigator.wakeLock) navigator.wakeLock.request("screen").then(function (l) { Esc.lock = l; }, function () {}); } catch (e) {}
-      try { window.speechSynthesis.cancel(); } catch (e) {}
-      $("rListen").textContent = "⏳ Cargando…";
-      if ($("rBody").querySelector(".vrow") && $("rTitle").textContent.indexOf(LIBROS[Number(sel.value)][0] + " " + $("bCap").value) === 0) alCargarCap(!!(parseInt($("bDesde").value, 10)));
-      else renderReader();
-    });
-    ["rPrev", "rNext"].forEach(function (id) { $(id).addEventListener("click", function () { if (Esc.on) { try { window.speechSynthesis.cancel(); } catch (e) {} } }); });
   })();
 
   /* ====== Cuaderno de estudio ====== */
