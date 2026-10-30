@@ -1522,6 +1522,14 @@
     var RAYS = ""; for (var i = 0; i < 8; i++) { var a = i * Math.PI / 4; RAYS += '<line x1="' + (Math.cos(a) * 32).toFixed(1) + '" y1="' + (Math.sin(a) * 32).toFixed(1) + '" x2="' + (Math.cos(a) * 42).toFixed(1) + '" y2="' + (Math.sin(a) * 42).toFixed(1) + '"/>'; }
     var RAIN = ""; for (var j = 0; j < 46; j++) { var rx = (j * 53) % 410, ry = (j * 97) % 230; RAIN += '<line x1="' + rx + '" y1="' + ry + '" x2="' + (rx - 7) + '" y2="' + (ry + 16) + '"/>'; }
     var P = {
+      wheat: function () { return '<g stroke="#d9a53a" stroke-width="3" stroke-linecap="round"><line x1="-9" y1="0" x2="-9" y2="-30"/><line x1="0" y1="0" x2="0" y2="-36"/><line x1="9" y1="0" x2="9" y2="-30"/></g><g fill="#e8bd4a"><ellipse cx="-9" cy="-34" rx="4" ry="8"/><ellipse cx="0" cy="-40" rx="4" ry="8"/><ellipse cx="9" cy="-34" rx="4" ry="8"/></g>'; },
+      torch: function () { return '<circle cy="-16" r="22" fill="#ffd54a" opacity=".25"/><rect x="-3" y="-4" width="6" height="22" fill="#8b5a2b"/><path d="M0-30 Q-9-14 0-6 Q9-14 0-30z" fill="#ff9f1c"/><path d="M0-22 Q-4-14 0-9 Q4-14 0-22z" fill="#ffe27a"/>'; },
+      jar: function (br) { return br ? '<path d="M-10 0 L-6 -10 L-2 -3 L4 -12 L10 0Z" fill="#c9783a"/>' : '<path d="M-10 0 Q-16 -14 -8 -26 H8 Q16 -14 10 0Z" fill="#c9783a"/><rect x="-6" y="-30" width="12" height="6" fill="#a85f2a"/>'; },
+      wall: function (open) { if (open) return '<g fill="#c9a27a"><rect x="-110" y="-14" width="30" height="14" rx="3"/><rect x="-70" y="-24" width="34" height="24" rx="3"/><rect x="-26" y="-12" width="30" height="12" rx="3"/><rect x="14" y="-26" width="36" height="26" rx="3"/><rect x="60" y="-14" width="30" height="14" rx="3"/><rect x="-50" y="-40" width="24" height="16" rx="3" transform="rotate(-12 -50 -40)"/></g><ellipse cx="0" cy="-30" rx="70" ry="26" fill="#d9c8a8" opacity=".55"/>'; var m = ""; for (var k = -108; k < 100; k += 36) m += '<rect x="' + k + '" y="-74" width="20" height="14" fill="#c9a27a"/>'; return '<rect x="-120" y="-60" width="240" height="60" fill="#c9a27a"/>' + m + '<path d="M-20 0 V-26 a20 20 0 0 1 40 0 V0Z" fill="#6d4c41"/><g stroke="#b08a62" stroke-width="2"><line x1="-120" y1="-30" x2="120" y2="-30"/><line x1="-60" y1="-60" x2="-60" y2="-30"/><line x1="40" y1="-60" x2="40" y2="-30"/></g>'; },
+      raven: function () { return '<ellipse rx="12" ry="7" fill="#2b2433"/><circle cx="-11" cy="-5" r="5" fill="#2b2433"/><path d="M-16-5l-7 2 7 1z" fill="#f59e0b"/><path d="M0-4 Q8-20 22-13 Q12-6 6 0z" fill="#3b3340"/><circle cx="-12" cy="-6" r="1.2" fill="#fff"/>'; },
+      sprout: function () { return '<line y2="-14" stroke="#3f9d57" stroke-width="3"/><ellipse cx="-6" cy="-14" rx="6" ry="3" fill="#4caf63" transform="rotate(-25 -6 -14)"/><ellipse cx="6" cy="-16" rx="6" ry="3" fill="#4caf63" transform="rotate(25 6 -16)"/>'; },
+      rockbig: function () { return '<path d="M-64 0 L-44 -42 L-12 -58 L30 -46 L64 0Z" fill="#8c8798"/><path d="M-12 -58 L30 -46 L8 -20Z" fill="#a29dae"/>'; },
+      seeds: function () { return '<g fill="#6d4c41"><circle cx="0" cy="0" r="2.6"/><circle cx="12" cy="-8" r="2.6"/><circle cx="22" cy="-4" r="2.6"/><circle cx="30" cy="-14" r="2.6"/><circle cx="40" cy="-8" r="2.6"/><circle cx="48" cy="-18" r="2.6"/></g>'; },
       sun: function () { return '<circle r="60" fill="#ffd54a" opacity=".22"/><g stroke="#ffd54a" stroke-width="5" stroke-linecap="round">' + RAYS + '</g><circle r="26" fill="#ffd54a"/>'; },
       moon: function () { return '<path d="M0-24a24 24 0 1 0 16 42A20 20 0 0 1 0-24z" fill="#fff3c4"/>'; },
       star: function () { return '<polygon points="0,-9 2.6,-3 9,-2.8 4,1.8 5.6,8 0,4.6 -5.6,8 -4,1.8 -9,-2.8 -2.6,-3" fill="#ffe27a"/>'; },
@@ -1691,6 +1699,112 @@
           { bg: "dusk", gr: "grass", it: [["tomb", 270, 216, 1.4], ["person", 110, 224, 1.2, R, 1, "h"], ["person", 165, 228, 1.1, T, 1, "h"]], tx: "Jesús murió porque nos ama. Sus amigos estaban muy tristes. Pusieron a Jesús en una tumba y taparon la entrada con una piedra grande." },
           { bg: "dawn", gr: "grass", it: [["sun", 340, 62, 1.2], ["tomb", 270, 216, 1.4, 1], ["angel", 215, 160, 1.1], ["person", 80, 224, 1.15, R, 1, "hu"], ["person", 135, 228, 1.1, T, 1, "hu"]], tx: "El domingo, muy temprano, las mujeres fueron a la tumba y vieron que estaba vacía. Un ángel les dijo: «¡Jesús ha resucitado!»" },
           { bg: "day", gr: "grass", it: [["sun", 60, 50, 1.1], ["heart", 200, 76, 1.6], ["tree", 45, 208, 1.1], ["tree", 355, 208, 1.1], ["person", 200, 222, 1.35, W, 0, "bu"], ["person", 125, 224, 1.1, IN, 0, "u"], ["person", 280, 224, 1.1, RD, 1, "u"]], tx: "Jesús se apareció a sus amigos y les dijo: «No tengan miedo». ¡Jesús vive hoy y está contigo todos los días!" }
+        ] }
+,
+      { t: "Rut y Noemí", ref: "Rut 1–2", lb: 7, cap: 1,
+        les: "Dios bendice el amor fiel y el cuidado de la familia.", pre: "¿Cómo puedes cuidar a alguien de tu familia?", ora: "Dios, ayúdame a amar y a cuidar a mi familia.",
+        es: [
+          { bg: "day", gr: "sand", it: [["sun", 60, 50, 1], ["mount", 345, 180, .9], ["palm", 50, 214, 1], ["person", 160, 222, 1.2, "#6d4c41", 1, "h"], ["person", 225, 224, 1.15, R, 1, "h"]], tx: "Noemí estaba triste y quería volver a su tierra. Su nuera Rut le dijo: «No te dejaré sola. Tu pueblo será mi pueblo, y tu Dios será mi Dios»." },
+          { bg: "day", gr: "sand", it: [["sun", 340, 46, 1], ["cloud", 110, 46, 1], ["wheat", 40, 214, 1.2], ["wheat", 100, 222, 1.2], ["wheat", 250, 216, 1.2], ["wheat", 310, 224, 1.2], ["wheat", 365, 216, 1.2], ["person", 180, 224, 1.2, R, 1, "h"]], tx: "Rut y Noemí llegaron a Belén. Rut fue a un campo a recoger espigas de trigo para que tuvieran qué comer. Trabajó con mucha alegría." },
+          { bg: "day", gr: "sand", it: [["sun", 60, 46, 1], ["heart", 200, 96, 1.5], ["house", 320, 208, 1.4], ["wheat", 40, 220, 1.2], ["person", 150, 222, 1.2, R, 1, "h"], ["person", 225, 222, 1.2, BR, 0, "b"]], tx: "Booz, el dueño del campo, vio lo buena que era Rut y la cuidó. Dios las bendijo, y Rut y Noemí ya no volvieron a estar solas." }
+        ] },
+      { t: "Ana y el pequeño Samuel", ref: "1 Samuel 1–3", lb: 8, cap: 1,
+        les: "Dios escucha nuestras oraciones, grandes y pequeñas.", pre: "¿Qué le quieres pedir hoy a Dios?", ora: "Habla, Señor, que yo te escucho.",
+        es: [
+          { bg: "day", gr: "grass", it: [["sun", 345, 46, 1], ["cloud", 120, 50, 1], ["house", 310, 208, 1.5], ["tree", 45, 208, 1], ["person", 180, 222, 1.25, "#ab47bc", 1, "hu"]], tx: "Ana quería mucho tener un hijo. Fue al templo y oró a Dios con todo su corazón." },
+          { bg: "day", gr: "grass", it: [["sun", 60, 46, 1], ["heart", 200, 96, 1.5], ["tree", 355, 208, 1], ["person", 170, 222, 1.25, "#ab47bc", 1], ["person", 232, 226, .55, "#ffd54a", 0]], tx: "Dios escuchó su oración y le dio un niño. Ana lo llamó Samuel, que significa «Dios escuchó»." },
+          { bg: "night", gr: "sand", it: STARS([[50, 40], [130, 70, .8], [320, 50, 1.1], [370, 100, .8]]).concat([["moon", 345, 46, .9], ["house", 90, 208, 1.4], ["lamp", 290, 196, 1], ["person", 200, 224, .85, IN, 0, "u"]]), tx: "Cuando creció, Samuel ayudaba en el templo. Una noche oyó la voz de Dios que lo llamaba, y respondió: «Habla, Señor, que yo te escucho»." }
+        ] },
+      { t: "Gedeón y las trompetas", ref: "Jueces 7", lb: 6, cap: 7,
+        les: "Dios puede usar a quien se siente pequeño.", pre: "¿Alguna vez te sentiste pequeño? ¿Qué te ayudó?", ora: "Dios, aunque soy pequeño, quiero confiar en ti.",
+        es: [
+          { bg: "dusk", gr: "sand", it: [["sun", 330, 158, 1], ["mount", 70, 180, 1], ["person", 190, 222, 1.2, "#6d4c41", 0, "s"], ["person", 255, 226, 1.1, IN, 0]], tx: "El pueblo de Dios tenía miedo de sus enemigos. Dios escogió a Gedeón, que se sentía pequeño y débil, para ayudarlos." },
+          { bg: "night", gr: "sand", it: STARS([[60, 40], [150, 70, .8], [250, 36, 1.1], [340, 70, .9]]).concat([["moon", 360, 36, .8], ["person", 90, 222, 1.1, BR, 0], ["torch", 120, 226, 1], ["person", 200, 222, 1.2, "#6d4c41", 0, "u"], ["torch", 232, 226, 1], ["person", 310, 222, 1.1, IN, 0], ["torch", 340, 226, 1]]), tx: "Dios le dijo: «No necesitas un ejército grande. Conmigo es suficiente». Solo quedaron 300 hombres, con trompetas, cántaros y antorchas." },
+          { bg: "dawn", gr: "sand", it: [["sun", 335, 62, 1.1], ["jar", 70, 224, 1, 1], ["jar", 135, 228, 1, 1], ["person", 100, 222, 1.1, BR, 0, "u"], ["person", 200, 222, 1.25, "#6d4c41", 0, "u"], ["person", 300, 222, 1.1, IN, 0, "u"], ["torch", 345, 226, 1]], tx: "Rodearon el campamento de noche, tocaron las trompetas y rompieron los cántaros. Los enemigos se asustaron y huyeron. ¡Dios les dio la victoria!" }
+        ] },
+      { t: "La reina Ester", ref: "Ester 4–5", lb: 16, cap: 4,
+        les: "Dios nos pone en lugares especiales para ayudar a otros.", pre: "¿A quién puedes ayudar con lo que tienes?", ora: "Dios, dame valor para hacer lo correcto.",
+        es: [
+          { bg: "day", gr: "grass", it: [["sun", 60, 46, 1], ["cloud", 330, 50, 1], ["house", 305, 208, 1.6], ["person", 150, 222, 1.2, R, 1, "c"], ["person", 215, 224, 1.1, BR, 0, "b"]], tx: "Ester era una joven que llegó a ser reina. Un día supo que su pueblo estaba en peligro y que ella podía ayudar." },
+          { bg: "day", gr: "grass", it: [["sun", 345, 46, 1], ["heart", 200, 96, 1.3], ["house", 90, 208, 1.5], ["person", 210, 222, 1.25, R, 1, "cu"]], tx: "Ester tuvo miedo, pero oró y pidió a su pueblo que orara por ella. Luego, con valentía, fue a hablar con el rey." },
+          { bg: "day", gr: "grass", it: [["sun", 60, 46, 1], ["heart", 200, 90, 1.6], ["tree", 355, 208, 1], ["person", 145, 222, 1.2, R, 1, "c"], ["person", 255, 222, 1.25, "#6a1b9a", 0, "bc"]], tx: "El rey la escuchó y salvó a su pueblo. Dios usó a Ester en el momento justo." }
+        ] },
+      { t: "Josué y los muros de Jericó", ref: "Josué 6", lb: 5, cap: 6,
+        les: "Cuando obedecemos a Dios, él hace cosas grandes, aunque no entendamos cómo.", pre: "¿Es fácil obedecer cuando no entiendes? ¿Por qué?", ora: "Dios, quiero obedecerte siempre.",
+        es: [
+          { bg: "day", gr: "sand", it: [["sun", 60, 46, 1], ["wall", 290, 206, 1.2], ["person", 130, 222, 1.25, "#6d4c41", 0, "bs"]], tx: "La ciudad de Jericó tenía unos muros altísimos. Dios le dijo a Josué: «Yo te daré la ciudad. Hagan lo que yo les diga»." },
+          { bg: "day", gr: "sand", it: [["cloud", 110, 46, 1], ["wall", 290, 200, 1.2], ["person", 60, 222, 1.05, BR, 0], ["person", 120, 224, 1.05, IN, 0], ["person", 180, 226, 1.1, "#6d4c41", 0, "b"], ["person", 235, 228, 1.05, OR, 0]], tx: "Durante seis días caminaron en silencio alrededor de la ciudad, una vez cada día. El séptimo día caminaron siete veces." },
+          { bg: "day", gr: "sand", it: [["sun", 200, 40, 1.1], ["wall", 280, 214, 1.1, 1], ["person", 60, 222, 1.1, BR, 0, "u"], ["person", 120, 224, 1.15, "#6d4c41", 0, "bu"], ["person", 180, 226, 1.1, IN, 0, "u"]], tx: "Al final todos gritaron y tocaron las trompetas. ¡Los muros cayeron! Dios cumplió su promesa." }
+        ] },
+      { t: "Elías y los cuervos", ref: "1 Reyes 17", lb: 10, cap: 17,
+        les: "Dios cuida de ti aun cuando parece que falta todo.", pre: "¿Qué cosas te da Dios cada día?", ora: "Gracias, Dios, porque cuidas de mí cada día.",
+        es: [
+          { bg: "day", gr: "sand", it: [["sun", 60, 46, 1], ["rockbig", 330, 210, 1.1], ["wave", 160, 216, 1.2], ["wave", 220, 226, 1], ["person", 120, 222, 1.25, BR, 0, "bs"]], tx: "Había una época sin lluvia y casi no había comida. Dios le dijo a Elías: «Escóndete junto al arroyo. Yo te cuidaré»." },
+          { bg: "day", gr: "sand", it: [["sun", 345, 46, 1], ["cloud", 110, 46, 1], ["raven", 150, 90, 1.4], ["raven", 260, 70, 1.3], ["rockbig", 345, 212, 1.1], ["wave", 90, 220, 1.2], ["person", 200, 222, 1.25, BR, 0, "bu"]], tx: "Cada mañana y cada tarde, unos cuervos le traían pan y carne a Elías. Dios cuida de quienes confían en él." },
+          { bg: "day", gr: "grass", it: [["sun", 60, 46, 1], ["heart", 200, 96, 1.4], ["house", 320, 208, 1.4], ["jar", 235, 226, 1.3], ["person", 140, 222, 1.2, BR, 0, "b"], ["person", 195, 224, 1.1, "#ab47bc", 1, "h"]], tx: "Después Dios lo envió a casa de una viuda que compartió lo poco que tenía. Y Dios no dejó que les faltara nada." }
+        ] },
+      { t: "Jesús bendice a los niños", ref: "Marcos 10:13–16", lb: 40, cap: 10,
+        les: "Jesús ama a los niños y siempre tiene tiempo para ti.", pre: "¿Qué le contarías a Jesús si te abrazara?", ora: "Jesús, gracias porque me amas.",
+        es: [
+          { bg: "day", gr: "grass", it: [["sun", 345, 46, 1], ["cloud", 140, 46, 1], ["tree", 45, 208, 1], ["person", 120, 226, .65, RD, 1], ["person", 160, 228, .6, "#ffd54a", 0], ["person", 230, 222, 1.2, BR, 0, "b"], ["person", 300, 222, 1.15, IN, 0, "b"]], tx: "La gente traía a sus niños para que Jesús los bendijera. Pero los amigos de Jesús dijeron: «No lo molesten»." },
+          { bg: "day", gr: "grass", it: [["sun", 60, 46, 1], ["cloud", 330, 50, 1], ["person", 200, 222, 1.35, W, 0, "bu"], ["person", 130, 228, .65, RD, 1], ["person", 270, 228, .65, "#ffd54a", 0], ["person", 320, 230, .6, V, 1]], tx: "Pero Jesús dijo: «Dejen que los niños vengan a mí. ¡El reino de Dios es de los que son como ellos!»" },
+          { bg: "day", gr: "grass", it: [["sun", 345, 46, 1], ["heart", 120, 100, 1.2], ["heart", 200, 80, 1.5], ["heart", 290, 100, 1.2], ["person", 200, 222, 1.35, W, 0, "b"], ["person", 140, 228, .65, RD, 1, "u"], ["person", 260, 228, .65, "#ffd54a", 0, "u"]], tx: "Jesús los abrazó y los bendijo, uno por uno. Tú eres muy querido por Jesús." }
+        ] },
+      { t: "Pedro camina sobre el agua", ref: "Mateo 14:22–33", lb: 39, cap: 14,
+        les: "Si miramos a Jesús y no al miedo, él nos sostiene.", pre: "¿Qué te ayuda a mirar a Jesús cuando tienes miedo?", ora: "Jesús, sujétame de la mano.",
+        es: [
+          { bg: "night", gr: "water", it: STARS([[50, 40], [150, 60, .8], [330, 40, 1.1]]).concat([["moon", 350, 90, .8], ["boat", 110, 186, 1.3], ["person", 100, 184, .7, "#ff7043", 0, "h"], ["person", 125, 184, .7, IN, 0, "h"], ["person", 300, 196, 1.1, W, 0, "bu"], ["wave", 220, 210, 1.3], ["wave", 330, 224, 1.2]]), tx: "Una noche, los amigos de Jesús iban en una barca cuando vieron a Jesús caminando sobre el agua. Tuvieron miedo, pero él les dijo: «¡Soy yo, no tengan miedo!»" },
+          { bg: "night", gr: "water", it: STARS([[50, 40], [150, 60, .8], [330, 40, 1.1]]).concat([["moon", 350, 90, .8], ["person", 120, 198, 1.1, "#ff7043", 0, "u"], ["person", 290, 198, 1.1, W, 0, "b"], ["wave", 60, 214, 1.2], ["wave", 200, 226, 1.4], ["wave", 340, 220, 1.2]]), tx: "Pedro dijo: «Señor, si eres tú, déjame ir contigo». Jesús le dijo: «Ven». ¡Y Pedro caminó sobre el agua!" },
+          { bg: "storm", gr: "water", it: [["rain", 0, 0, 1], ["person", 220, 198, 1.1, W, 0, "bu"], ["person", 170, 214, .95, "#ff7043", 0, "u"], ["wave", 100, 208, 1.6], ["wave", 170, 222, 1.8], ["wave", 330, 212, 1.6]], tx: "Pero Pedro miró las olas grandes, tuvo miedo y empezó a hundirse. Jesús lo tomó de la mano: «¿Por qué dudaste?»" }
+        ] },
+      { t: "Bartimeo quiere ver", ref: "Marcos 10:46–52", lb: 40, cap: 10,
+        les: "Jesús escucha cuando lo llamamos con fe.", pre: "¿Qué le quieres pedir a Jesús hoy?", ora: "Jesús, escúchame, porque tú me ayudas.",
+        es: [
+          { bg: "day", gr: "sand", it: [["sun", 345, 46, 1], ["palm", 50, 214, 1], ["person", 120, 224, 1.1, "#6d4c41", 1, "hu"], ["person", 245, 222, 1.2, W, 0, "b"], ["person", 305, 222, 1.1, IN, 0], ["person", 355, 226, 1, OR, 1, "h"]], tx: "Bartimeo no podía ver y pedía ayuda junto al camino. Cuando oyó que Jesús pasaba, gritó: «¡Jesús, ten compasión de mí!»" },
+          { bg: "day", gr: "sand", it: [["sun", 60, 46, 1], ["cloud", 330, 50, 1], ["person", 140, 224, 1.15, "#6d4c41", 1, "hu"], ["person", 245, 222, 1.3, W, 0, "b"]], tx: "La gente le decía que se callara, pero él gritó más fuerte. Jesús se detuvo y le preguntó: «¿Qué quieres que haga por ti?»" },
+          { bg: "day", gr: "sand", it: [["sun", 200, 44, 1.3], ["heart", 120, 100, 1.2], ["heart", 290, 100, 1.2], ["person", 140, 224, 1.2, "#6d4c41", 1, "u"], ["person", 245, 222, 1.3, W, 0, "b"]], tx: "«¡Quiero ver!», dijo Bartimeo. Jesús lo sanó y Bartimeo siguió a Jesús lleno de alegría, dando gracias a Dios." }
+        ] },
+      { t: "El hijo que volvió a casa", ref: "Lucas 15:11–32", lb: 41, cap: 15,
+        les: "Dios nos recibe con amor cuando volvemos a él.", pre: "¿Cómo crees que se sintió el hijo cuando su papá lo abrazó?", ora: "Gracias, Dios, porque siempre me recibes.",
+        es: [
+          { bg: "day", gr: "grass", it: [["sun", 345, 46, 1], ["cloud", 140, 50, 1], ["house", 85, 208, 1.5], ["person", 175, 222, 1.2, BR, 0, "b"], ["person", 275, 224, 1.1, OR, 0]], tx: "Un joven le pidió a su papá su parte de la herencia y se fue lejos. Gastó todo y se quedó sin nada." },
+          { bg: "dusk", gr: "sand", it: [["sun", 335, 160, 1], ["rockbig", 70, 214, 1], ["person", 200, 224, 1.2, OR, 0]], tx: "Con hambre y solo, recordó la casa de su papá. Dijo: «Volveré a casa y le pediré perdón»." },
+          { bg: "day", gr: "grass", it: [["sun", 345, 46, 1], ["heart", 195, 90, 1.6], ["house", 320, 208, 1.5], ["person", 160, 222, 1.2, OR, 0, "u"], ["person", 225, 222, 1.25, BR, 0, "bu"]], tx: "Su papá lo vio de lejos, corrió a abrazarlo e hizo una gran fiesta. Dios nos recibe así cuando volvemos a él." }
+        ] },
+      { t: "El sembrador", ref: "Mateo 13:1–9", lb: 39, cap: 13,
+        les: "La Palabra de Dios crece en un corazón que escucha.", pre: "¿Cómo puedes cuidar la Palabra de Dios en tu corazón?", ora: "Dios, quiero ser buena tierra para tu Palabra.",
+        es: [
+          { bg: "day", gr: "grass", it: [["sun", 345, 46, 1], ["cloud", 120, 50, 1], ["raven", 270, 100, 1.2], ["seeds", 190, 190, 1], ["person", 160, 222, 1.25, OR, 0, "u"]], tx: "Jesús contó de un sembrador que salió a sembrar semillas. Unas cayeron en el camino y los pájaros se las comieron." },
+          { bg: "day", gr: "grass", it: [["sun", 60, 46, 1], ["rockbig", 110, 212, 1.2], ["rockbig", 300, 214, .9], ["sprout", 200, 224, 1.2], ["sprout", 240, 228, 1.1]], tx: "Otras cayeron entre piedras y espinas, y no pudieron crecer bien." },
+          { bg: "day", gr: "grass", it: [["sun", 345, 46, 1], ["heart", 200, 90, 1.5], ["wheat", 50, 214, 1.4], ["wheat", 110, 224, 1.4], ["wheat", 170, 216, 1.4], ["wheat", 230, 226, 1.4], ["wheat", 290, 216, 1.4], ["wheat", 350, 224, 1.4]], tx: "Pero otras cayeron en buena tierra y dieron mucho fruto. La Palabra de Dios es como esa semilla: crece en un corazón que escucha." }
+        ] },
+      { t: "Los sabios y la estrella", ref: "Mateo 2", lb: 39, cap: 2,
+        les: "Quienes buscan a Jesús lo encuentran.", pre: "¿Qué regalo de amor le darías a Jesús?", ora: "Jesús, quiero buscarte siempre.",
+        es: [
+          { bg: "night", gr: "sand", it: [["bigstar", 200, 46, 1.4], ["palm", 50, 214, 1], ["person", 130, 222, 1.15, "#8e24aa", 1, "c"], ["person", 200, 224, 1.2, "#1e88e5", 0, "cb"], ["person", 270, 222, 1.15, "#e53935", 2, "c"]], tx: "Unos sabios de tierras lejanas vieron una estrella muy brillante y entendieron que había nacido un rey. Salieron a buscarlo." },
+          { bg: "night", gr: "sand", it: [["bigstar", 330, 50, 1.2], ["moon", 60, 50, .9], ["mount", 90, 182, 1], ["person", 120, 224, 1.1, "#8e24aa", 1, "c"], ["person", 190, 226, 1.15, "#1e88e5", 0, "cb"], ["person", 255, 224, 1.1, "#e53935", 2, "c"]], tx: "Caminaron muchos días siguiendo la estrella hasta llegar a Belén." },
+          { bg: "night", gr: "sand", it: [["bigstar", 200, 40, 1.2], ["manger", 200, 218, 1.3], ["person", 80, 224, 1.05, "#8e24aa", 1, "c"], ["person", 125, 228, 1.05, "#1e88e5", 0, "cb"], ["person", 300, 226, 1.1, "#42a5f5", 1, "h"], ["coin", 160, 232, 1], ["coin", 245, 232, 1]], tx: "Allí encontraron a Jesús con María. Se alegraron mucho, lo adoraron y le dieron regalos: oro, incienso y mirra." }
+        ] },
+      { t: "La casa sobre la roca", ref: "Mateo 7:24–27", lb: 39, cap: 7,
+        les: "Hacer caso a Jesús nos da seguridad.", pre: "¿Qué cosas buenas que Jesús dice puedes hacer hoy?", ora: "Jesús, quiero construir mi vida contigo.",
+        es: [
+          { bg: "day", gr: "grass", it: [["sun", 345, 46, 1], ["cloud", 120, 50, 1], ["rockbig", 270, 214, 1.5], ["house", 270, 150, .8], ["person", 130, 222, 1.2, OR, 0, "bh"]], tx: "Jesús contó de dos constructores. El sabio construyó su casa sobre una roca firme." },
+          { bg: "storm", gr: "grass", it: [["rain", 0, 0, 1], ["rockbig", 210, 216, 1.6], ["house", 210, 144, .85], ["wave", 80, 222, 1.3], ["wave", 340, 224, 1.3]], tx: "Llegó la lluvia, crecieron los ríos y soplaron los vientos. ¡La casa sobre la roca no se cayó!" },
+          { bg: "day", gr: "grass", it: [["sun", 60, 46, 1], ["heart", 200, 76, 1.5], ["rockbig", 300, 214, 1.3], ["house", 300, 154, .75], ["person", 130, 222, 1.2, OR, 0, "bu"], ["person", 200, 224, 1.25, W, 0, "b"]], tx: "Escuchar a Jesús y hacer lo que él dice es como construir sobre la roca. Aunque vengan tormentas, estaremos seguros." }
+        ] },
+      { t: "El Señor es mi pastor", ref: "Salmo 23", lb: 18, cap: 23,
+        les: "Dios es como un pastor que siempre te cuida.", pre: "¿Cuándo sientes que Dios está contigo?", ora: "Señor, tú eres mi pastor. Gracias por cuidarme.",
+        es: [
+          { bg: "day", gr: "grass", it: [["sun", 345, 46, 1], ["cloud", 130, 50, 1], ["hill", 100, 180, 1.2, "#58a865"], ["sheep", 80, 220, 1], ["sheep", 140, 226, .9], ["sheep", 310, 222, 1], ["person", 220, 222, 1.3, M, 0, "s"]], tx: "«El Señor es mi pastor: nada me faltará.» Como un pastor cuida a sus ovejas, Dios te cuida a ti." },
+          { bg: "day", gr: "grass", it: [["sun", 60, 46, 1], ["cloud", 330, 50, 1], ["hill", 210, 214, 1.1, "#6fb6ec"], ["sheep", 90, 222, 1], ["sheep", 330, 224, 1], ["person", 210, 190, 1.0, M, 0, "s"]], tx: "Él me hace descansar en prados verdes y me lleva junto a aguas tranquilas." },
+          { bg: "night", gr: "grass", it: STARS([[60, 40], [160, 70, .8], [260, 40, 1.1]]).concat([["moon", 340, 50, 1], ["heart", 200, 100, 1.2], ["person", 170, 222, 1.3, M, 0, "s"], ["lamp", 205, 192, 1], ["sheep", 270, 226, .9], ["sheep", 320, 222, .8]]), tx: "Aunque camine por lugares oscuros, no tendré miedo, porque tú estás conmigo." }
+        ] },
+      { t: "Jesús nos enseña a orar", ref: "Mateo 6:5–13", lb: 39, cap: 6,
+        les: "Orar es hablar con Dios, y él siempre nos escucha.", pre: "¿Cuándo te gusta orar?", ora: "Padre, gracias por escucharme siempre.",
+        es: [
+          { bg: "day", gr: "grass", it: [["sun", 345, 46, 1], ["cloud", 130, 50, 1], ["tree", 45, 208, 1], ["person", 120, 224, 1.1, IN, 0], ["person", 190, 226, 1.15, T, 1], ["person", 260, 222, 1.3, W, 0, "b"], ["person", 330, 226, 1.0, OR, 0]], tx: "Un día, los amigos de Jesús le pidieron: «Enséñanos a orar». Jesús les dijo que podemos hablarle a Dios como a un Padre que nos ama." },
+          { bg: "dawn", gr: "grass", it: [["sun", 60, 80, 1.2], ["cloud", 330, 50, 1], ["heart", 200, 84, 1.3], ["person", 130, 224, 1.1, IN, 0, "u"], ["person", 200, 226, 1.3, W, 0, "bu"], ["person", 270, 224, 1.1, T, 1, "u"]], tx: "Jesús les enseñó: «Padre nuestro, que estás en el cielo…». Le damos gracias a Dios, le pedimos lo que necesitamos y le pedimos perdón." },
+          { bg: "dawn", gr: "grass", it: [["sun", 340, 70, 1.2], ["heart", 150, 96, 1.4], ["house", 300, 208, 1.4], ["person", 150, 226, .85, OR, 0, "u"]], tx: "Podemos orar en cualquier lugar y a cualquier hora: al despertar, antes de comer o al dormir. ¡Dios siempre escucha!" }
         ] }
     ];
 
