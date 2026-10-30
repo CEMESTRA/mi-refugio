@@ -722,6 +722,20 @@
         <h2>Compara versiones y estudia la Palabra</h2>
         <p>Elige el libro, el capítulo y los versículos. La <b>Nueva Traducción Viviente (NTV)</b> se lee aquí mismo. Para <b>compararla</b> con la RVR1960, la NVI, la TLA y otras, ábrelas todas juntas en BibleGateway.</p>
       </div>
+      <div class="panel reader" id="bReader" hidden aria-live="polite" style="margin-bottom:24px">
+        <div class="reader-head">
+          <h3 id="rTitle"></h3>
+          <div class="reader-nav">
+            <a class="btn alt small" id="rOtra" href="https://www.biblegateway.com/" target="_blank" rel="noopener">Otra versión en BibleGateway ↗</a>
+            <button class="btn alt small" type="button" id="rPrev">‹ Capítulo anterior</button>
+            <button class="btn alt small" type="button" id="rNext">Capítulo siguiente ›</button>
+            <button class="btn alt small" type="button" id="rClose">Cerrar</button>
+          </div>
+        </div>
+        <div id="rBody" class="reader-body"></div>
+        <p class="hint" id="rNote"></p>
+      </div>
+
       <div class="two">
         <div class="panel">
           <h3>Comparador de versiones</h3>
@@ -743,20 +757,6 @@
           <p class="hint">Toca un día para leerlo aquí mismo en la NTV. Si prefieres otra versión, usa el botón «Otra versión en BibleGateway» que aparece junto al texto.</p>
           <div class="plan" id="planList"></div>
         </div>
-      </div>
-
-      <div class="panel reader" id="bReader" hidden aria-live="polite" style="margin-top:24px">
-        <div class="reader-head">
-          <h3 id="rTitle"></h3>
-          <div class="reader-nav">
-            <a class="btn alt small" id="rOtra" href="https://www.biblegateway.com/" target="_blank" rel="noopener">Otra versión en BibleGateway ↗</a>
-            <button class="btn alt small" type="button" id="rPrev">‹ Capítulo anterior</button>
-            <button class="btn alt small" type="button" id="rNext">Capítulo siguiente ›</button>
-            <button class="btn alt small" type="button" id="rClose">Cerrar</button>
-          </div>
-        </div>
-        <div id="rBody" class="reader-body"></div>
-        <p class="hint" id="rNote"></p>
       </div>
 
       <div class="panel" style="margin-top:24px">
