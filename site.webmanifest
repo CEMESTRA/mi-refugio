@@ -1,13 +1,25 @@
 {
+  "id": "/",
   "name": "Mi Refugio: Ganando Almas para Cristo",
   "short_name": "Mi Refugio",
+  "description": "Ministerio cristiano independiente. Conoce a Jesús, lee la Biblia, pide oración y comparte tu testimonio.",
   "lang": "es",
-  "start_url": "/",
-  "display": "browser",
+  "dir": "ltr",
+  "start_url": "/?origen=app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
   "theme_color": "#6B3FD0",
   "background_color": "#FFFFFF",
+  "categories": ["lifestyle", "education"],
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Pedir oración", "short_name": "Oración", "url": "/#oracion", "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }] },
+    { "name": "Leer la Biblia", "short_name": "Biblia", "url": "/#biblia", "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }] },
+    { "name": "Versículo del día", "short_name": "Versículo", "url": "/#versiculo", "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }] }
   ]
 }
