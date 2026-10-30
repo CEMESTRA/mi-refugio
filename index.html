@@ -903,7 +903,8 @@
       <p class="hint" style="margin-top:8px">Para instalarla en tu celular, abre esta dirección desde el celular.</p>
     </div>
     <p class="hint" id="instApp" hidden><b>Estás dentro de otra aplicación</b> (como WhatsApp, Facebook o Instagram). Toca los tres puntos o el icono de compartir y elige <b>Abrir en el navegador</b>; después sigue estos pasos.</p>
-    <div class="row"><button class="btn" id="instOk" type="button">Entendido</button></div>
+    <div class="row"><button class="btn" id="instNow" type="button" hidden>Instalar ahora</button><button class="btn alt" id="instOk" type="button">Entendido</button></div>
+    <p class="hint" id="instCopy" hidden><button class="btn alt small" id="instLink" type="button">Copiar enlace para abrirlo en el navegador</button> <span id="instLinkOk"></span></p>
   </div>
 </div>
 
@@ -1241,13 +1242,27 @@
     if (ios) setTimeout(mostrar, 7000);
     window.addEventListener("appinstalled", function () { dp = null; ocultar(); $("instFootRow").hidden = true; });
     function guia() {
+      $("instNow").hidden = !dp;
       $("instIos").hidden = !ios; $("instAnd").hidden = !android; $("instPc").hidden = movil; $("instApp").hidden = !enApp;
       lastFocus = document.activeElement; dlg.hidden = false; $("instOk").focus();
+      if (dp) sincronizarAhora();
     }
-    function cerrarGuia() { dlg.hidden = true; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+    function cerrarGuia() { dlg.hidden = true; $("instNow").hidden = true; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
     function instalar() {
       if (dp) { var d = dp; dp = null; d.prompt(); if (d.userChoice) d.userChoice.then(function () { ocultar(); }); }
       else guia();
+    }
+    function sincronizarAhora() {
+      var ver = !!(dp && !dlg.hidden); $("instNow").hidden = !ver;
+      if (ver) { $("instIos").hidden = true; $("instAnd").hidden = true; $("instPc").hidden = true; $("instNow").focus(); }
+    }
+    window.addEventListener("beforeinstallprompt", function () { setTimeout(sincronizarAhora, 0); });
+    $("instNow").addEventListener("click", function () { if (dp) { var d = dp; dp = null; d.prompt(); if (d.userChoice) d.userChoice.then(function () { cerrarGuia(); ocultar(); }); } });
+    $("instLink").addEventListener("click", function () { copyText("https://mirefugioencristo.com/", $("instLinkOk"), "Copiado. Pégalo en Chrome o Safari."); });
+    /* Enlace directo: mirefugioencristo.com/instalar abre la pantalla de instalación */
+    if (/[?&]instalar=1\b/.test(location.search)) {
+      try { history.replaceState(null, "", location.pathname + location.hash); } catch (e) {}
+      if (!standalone()) setTimeout(function () { guia(); $("instCopy").hidden = !(enApp || (!dp && movil)); sincronizarAhora(); }, 1200);
     }
     $("instGo").addEventListener("click", instalar);
     $("instFoot").addEventListener("click", instalar);
