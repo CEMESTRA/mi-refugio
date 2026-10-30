@@ -349,26 +349,49 @@
   @media (max-width: 820px) {
     .nav { display: none; }
     .bar { flex-wrap: nowrap; }
-    body { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
-    .fab-wrap { bottom: calc(86px + env(safe-area-inset-bottom, 0px)) !important; }
+    body { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+    .fab-wrap { bottom: calc(100px + env(safe-area-inset-bottom, 0px)) !important; }
     .tabbar {
-      display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); position: fixed; left: 0; right: 0; bottom: 0; z-index: 45;
-      background: var(--surface); border-top: 1px solid var(--line);
-      padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -6px 24px rgba(20,17,28,0.10);
+      display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); position: fixed; left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); z-index: 45;
+      background: color-mix(in srgb, var(--surface) 90%, transparent); -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4);
+      border: 1px solid var(--line); border-radius: 28px; padding: 6px;
+      box-shadow: 0 14px 34px rgba(20,17,28,0.22), 0 2px 6px rgba(20,17,28,0.10);
+      animation: tabIn .6s cubic-bezier(.34,1.4,.64,1) both;
+    }
+    @keyframes tabIn { from { transform: translateY(120%); opacity: 0; } to { transform: none; opacity: 1; } }
+    .tabind {
+      position: absolute; top: 6px; bottom: 6px; left: 0; width: 0; border-radius: 22px; pointer-events: none;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 24%, transparent), color-mix(in srgb, var(--accent) 8%, transparent));
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent);
+      transition: transform .5s cubic-bezier(.34,1.35,.64,1), width .35s ease, opacity .3s;
     }
     .mtab {
-      position: relative; display: grid; justify-items: center; align-content: center; gap: 3px; min-height: 56px; padding: 6px 2px;
+      position: relative; z-index: 1; overflow: hidden; display: grid; justify-items: center; align-content: center; gap: 3px; min-height: 56px; padding: 6px 2px;
       border: 0; background: none; color: var(--muted); font: inherit; font-size: 0.7rem; font-weight: 700; letter-spacing: 0;
-      text-decoration: none; cursor: pointer; border-radius: 14px; -webkit-tap-highlight-color: transparent;
+      text-decoration: none; cursor: pointer; border-radius: 22px; -webkit-tap-highlight-color: transparent;
+      transition: transform .22s cubic-bezier(.34,1.56,.64,1), color .25s;
     }
-    .mtab svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-    .mtab.on { color: var(--accent); background: var(--surface-2); }
-    .mtab.on::before { content: ""; position: absolute; top: -7px; left: 28%; right: 28%; height: 3px; border-radius: 0 0 3px 3px; background: var(--accent); }
+    .mtab:active { transform: scale(.88); }
+    .mtab svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: transform .45s cubic-bezier(.34,1.8,.64,1); }
+    .mtab span { transition: transform .3s, letter-spacing .3s; }
+    .mtab.on { color: var(--accent); }
+    .mtab.on svg { transform: translateY(-3px) scale(1.2); animation: mtabBob 2.6s ease-in-out .5s infinite; stroke-width: 2.1; }
+    .mtab.on span { transform: translateY(-1px); }
+    @keyframes mtabBob { 0%, 100% { transform: translateY(-3px) scale(1.2); } 50% { transform: translateY(-6px) scale(1.2); } }
+    .mtab[aria-expanded="true"] svg { transform: rotate(90deg) scale(1.15); }
+    .mtab .rip { position: absolute; border-radius: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px; background: var(--accent); opacity: .35; pointer-events: none; animation: rip .6s ease-out forwards; }
+    @keyframes rip { to { transform: scale(14); opacity: 0; } }
     .more-sheet {
-      display: grid; gap: 6px; position: fixed; z-index: 44; left: 12px; right: 12px; bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+      display: grid; gap: 6px; position: fixed; z-index: 44; left: 12px; right: 12px; bottom: calc(92px + env(safe-area-inset-bottom, 0px));
+      transform-origin: 90% 100%; animation: sheetIn .35s cubic-bezier(.34,1.45,.64,1) both;
       background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 12px; box-shadow: 0 18px 48px rgba(20,17,28,0.28);
       grid-template-columns: 1fr 1fr;
     }
+    @keyframes sheetIn { from { transform: translateY(24px) scale(.85); opacity: 0; } to { transform: none; opacity: 1; } }
+    .more-sheet a { animation: itemIn .4s cubic-bezier(.34,1.5,.64,1) both; transition: transform .2s cubic-bezier(.34,1.56,.64,1), background .2s; }
+    .more-sheet a:nth-of-type(1) { animation-delay: .04s; } .more-sheet a:nth-of-type(2) { animation-delay: .09s; } .more-sheet a:nth-of-type(3) { animation-delay: .14s; } .more-sheet a:nth-of-type(4) { animation-delay: .19s; } .more-sheet a:nth-of-type(5) { animation-delay: .24s; }
+    .more-sheet a:active { transform: scale(.94); }
+    @keyframes itemIn { from { transform: translateY(14px) scale(.9); opacity: 0; } to { transform: none; opacity: 1; } }
     .more-sheet[hidden] { display: none !important; }
     .more-sheet p { grid-column: 1 / -1; margin: 2px 6px 4px; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 800; color: var(--muted); }
     .more-sheet a { display: flex; align-items: center; gap: 10px; padding: 14px 12px; border-radius: 14px; background: var(--surface-2); color: var(--fg); text-decoration: none; font-weight: 700; font-size: 0.95rem; }
@@ -556,7 +579,7 @@
   .totop.on { opacity: 1; transform: none; pointer-events: auto; }
   .totop.on:hover { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(107,63,208,0.38); }
   .totop svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-  @media (max-width: 820px) { .totop { bottom: calc(86px + env(safe-area-inset-bottom, 0px)); } }
+  @media (max-width: 820px) { .totop { bottom: calc(100px + env(safe-area-inset-bottom, 0px)); } }
   .fab-menu { background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: 18px; padding: 16px; display: grid; gap: 10px; width: min(340px, calc(100vw - 32px)); box-shadow: 0 16px 40px rgba(0,0,0,0.3); }
   .fab-menu p { font-size: 0.92rem; color: var(--muted); }
 
@@ -577,6 +600,7 @@
     .btn, .btn::after, .totop { transition: none; }
     .btn:hover { transform: none; }
     .meter i { transition: none; }
+    .tabbar, .tabind, .mtab, .mtab svg, .more-sheet, .more-sheet a, .mtab.on svg { animation: none !important; transition: none !important; }
   }
 </style>
 </head>
@@ -930,6 +954,7 @@
 
 <!-- Menú fijo para celular -->
 <nav class="tabbar" id="tabbar" aria-label="Menú principal">
+  <span class="tabind" id="tabInd" aria-hidden="true"></span>
   <a class="mtab" href="#inicio" data-t="inicio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/></svg><span>Inicio</span></a>
   <a class="mtab" href="#camino" data-t="camino"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M7 8h10"/></svg><span>Jesús</span></a>
   <a class="mtab" href="#biblia" data-t="biblia"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/></svg><span>Biblia</span></a>
@@ -1396,11 +1421,20 @@
       ORDEN.forEach(function (id) { var el = $(id); if (el && el.getBoundingClientRect().top <= y) actual = id; });
       if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) actual = "oracion";
       var t = MAPA[actual];
-      Array.prototype.forEach.call(tabs, function (a) { var on = a.getAttribute("data-t") === t; a.classList.toggle("on", on); if (on) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current"); });
+      Array.prototype.forEach.call(tabs, function (a) { var on = a.getAttribute("data-t") === t; a.classList.toggle("on", on); if (on) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current"); if (on) mover(a); });
     }
+    var ind = $("tabInd");
+    function mover(a) { if (!ind || !a.offsetWidth) return; ind.style.width = a.offsetWidth + "px"; ind.style.transform = "translateX(" + a.offsetLeft + "px)"; }
+    Array.prototype.forEach.call(tabs, function (a) {
+      a.addEventListener("pointerdown", function (e) {
+        var r = a.getBoundingClientRect(), d = document.createElement("span"); d.className = "rip"; d.style.left = (e.clientX - r.left) + "px"; d.style.top = (e.clientY - r.top) + "px";
+        a.appendChild(d); setTimeout(function () { if (d.parentNode) d.parentNode.removeChild(d); }, 650);
+        try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
+      });
+    });
     var tick = false;
     window.addEventListener("scroll", function () { if (!tick) { tick = true; requestAnimationFrame(function () { tick = false; marcar(); }); } }, { passive: true });
-    window.addEventListener("resize", marcar); marcar();
+    window.addEventListener("resize", function () { marcar(); }); marcar(); setTimeout(marcar, 400);
   })();
 
 
