@@ -321,6 +321,22 @@
   .mouth { transform-box: fill-box; transform-origin: 50% 0; }
   .kfig.habla .mouth { animation: kmouth .42s ease-in-out infinite; }
   @keyframes kmouth { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(2.1); } }
+  .kfs { position: absolute; top: 8px; right: 8px; width: 40px; height: 40px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center; background: rgba(20,17,28,0.62); color: #fff; transition: transform .2s, background .2s; }
+  .kfs:hover { background: var(--accent); transform: scale(1.08); }
+  .kfig .kfs svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .kcap, .kfx { display: none; }
+  .kfig.kfull { position: fixed; inset: 0; z-index: 2147483000; border: 0; border-radius: 0; aspect-ratio: auto; background: #0d0b14; display: grid; place-items: center; }
+  .kfig.kfull svg#kSvg { width: min(100vw, calc(100vh * 5 / 3)); width: min(100vw, calc(100dvh * 5 / 3)); height: auto; aspect-ratio: 5 / 3; overflow: hidden; }
+  .kfig.kfull .kfs { display: none; }
+  .kfig.kfull .kn { z-index: 3; }
+  .kfig.kfull .kcap { display: block; position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 38px max(18px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px)); background: linear-gradient(180deg, transparent, rgba(8,6,14,.82) 55%); color: #fff; font: 600 clamp(1.05rem, 2.5vw, 1.7rem)/1.45 var(--font-body); text-align: center; text-shadow: 0 2px 8px rgba(0,0,0,.6); pointer-events: none; }
+  .kcap .w { border-radius: 6px; padding: 0 1px; transition: background .15s; }
+  .kcap .w.on { background: rgba(255,226,122,.38); }
+  .kfig.kfull .kfx { display: block; position: absolute; top: max(12px, env(safe-area-inset-top, 0px)); z-index: 3; border: 0; cursor: pointer; font: 700 1rem var(--font-body); color: #fff; background: rgba(20,17,28,.66); backdrop-filter: blur(6px); padding: 10px 16px; border-radius: 999px; }
+  .kfx-l { left: max(12px, env(safe-area-inset-left, 0px)); }
+  .kfx-r { right: max(12px, env(safe-area-inset-right, 0px)); width: 44px; height: 44px; padding: 0 !important; }
+  html.kno-scroll, html.kno-scroll body { overflow: hidden; }
+  @media (orientation: portrait) { .kfig.kfull::before { content: "Gira el teléfono para verlo más grande"; position: absolute; left: 0; right: 0; top: calc(max(12px, env(safe-area-inset-top, 0px)) + 62px); text-align: center; color: rgba(255,255,255,.7); font: 600 .9rem var(--font-body); pointer-events: none; } }
   .ktext.nuevo { animation: ktx .5s ease-out; }
   @keyframes ktx { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
   .ktext .w { border-radius: 6px; padding: 0 1px; transition: background .15s, color .15s; }
@@ -895,6 +911,10 @@
           <svg id="kSvg" viewBox="0 0 400 240" role="img" aria-label=""></svg>
           <button class="kn prev" id="kPrev" type="button" aria-label="Dibujo anterior">‹</button>
           <button class="kn next" id="kNext" type="button" aria-label="Dibujo siguiente">›</button>
+          <button class="kfs" id="kFs" type="button" aria-label="Ver la historia en pantalla completa" title="Pantalla completa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+          <div class="kcap" id="kCap" aria-hidden="true"></div>
+          <button class="kfx kfx-l" id="kFsListen" type="button">🔊 Escuchar</button>
+          <button class="kfx kfx-r" id="kFsClose" type="button" aria-label="Salir de pantalla completa">✕</button>
         </div>
         <div class="kdots" id="kDots" role="group" aria-label="Dibujos de la historia"></div>
         <p class="ktext" id="kText" aria-live="polite"></p>
@@ -2288,14 +2308,34 @@
     var store2 = { get: function (k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }, set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
     var vistos = store2.get("refugio-ninos") || [];
     function hoy() { var d = new Date(); return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5) % HIST.length; }
-    function habla(v) { var f = document.querySelector(".kfig"); if (f) f.classList.toggle("habla", v); }
+    var figE = document.querySelector(".kfig"), ph = null, full = false;
+    function habla(v) { if (figE) figE.classList.toggle("habla", v); $("kFsListen").textContent = v ? "⏹ Detener" : "🔊 Escuchar"; }
+    /* pantalla completa: la imagen animada ocupa toda la pantalla con el texto abajo */
+    function entrar() {
+      if (full || !figE) return; full = true;
+      ph = document.createComment("kfig"); figE.parentNode.insertBefore(ph, figE); document.body.appendChild(figE);
+      figE.classList.add("kfull"); document.documentElement.classList.add("kno-scroll");
+      $("kCap").textContent = HIST[cur].es[Math.min(esc, HIST[cur].es.length - 1)].tx;
+      try { var rq = figE.requestFullscreen || figE.webkitRequestFullscreen; if (rq) { var pr = rq.call(figE); if (pr && pr.then) pr.then(function () { try { screen.orientation.lock("landscape").catch(function () {}); } catch (e) {} }, function () {}); } } catch (e) {}
+    }
+    function salir() {
+      if (!full) return; full = false; figE.classList.remove("kfull");
+      if (ph && ph.parentNode) { ph.parentNode.insertBefore(figE, ph); ph.parentNode.removeChild(ph); }
+      document.documentElement.classList.remove("kno-scroll");
+      try { if (document.fullscreenElement || document.webkitFullscreenElement) (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (e) {}
+      try { screen.orientation.unlock(); } catch (e) {}
+      try { figE.scrollIntoView({ block: "center" }); } catch (e) {}
+    }
+    document.addEventListener("fullscreenchange", function () { if (!document.fullscreenElement && full) salir(); });
+    document.addEventListener("webkitfullscreenchange", function () { if (!document.webkitFullscreenElement && full) salir(); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && full) salir(); });
     var narr = 0, etiqueta = "🔊 Escuchar y ver la historia", aud = new Audio();
     aud.preload = "auto";
-    function parar() { narr++; try { aud.pause(); aud.onended = aud.onerror = null; } catch (e) {} try { window.speechSynthesis.cancel(); } catch (e) {} hablando = false; habla(false); try { var hh = HIST[cur]; $("kLes").textContent = hh.les; $("kText").textContent = hh.es[Math.min(esc, hh.es.length - 1)].tx; } catch (e) {} $("kListen").textContent = etiqueta; }
+    function parar() { narr++; try { aud.pause(); aud.onended = aud.onerror = null; } catch (e) {} try { window.speechSynthesis.cancel(); } catch (e) {} hablando = false; habla(false); try { var hh = HIST[cur]; $("kLes").textContent = hh.les; $("kText").textContent = hh.es[Math.min(esc, hh.es.length - 1)].tx; $("kCap").textContent = $("kText").textContent; } catch (e) {} $("kListen").textContent = etiqueta; }
     function pintar() {
       var h = HIST[cur], e = h.es[esc];
       $("kSvg").innerHTML = dibujar(e); $("kSvg").setAttribute("aria-label", "Dibujo " + (esc + 1) + " de " + h.es.length + ": " + h.t);
-      $("kLes").textContent = h.les; var kt = $("kText"); kt.textContent = e.tx; if (!RM) { kt.classList.remove("nuevo"); void kt.offsetWidth; kt.classList.add("nuevo"); }
+      $("kLes").textContent = h.les; $("kCap").textContent = e.tx; var kt = $("kText"); kt.textContent = e.tx; if (!RM) { kt.classList.remove("nuevo"); void kt.offsetWidth; kt.classList.add("nuevo"); }
       $("kPrev").disabled = esc === 0; $("kNext").disabled = esc === h.es.length - 1;
       Array.prototype.forEach.call($("kDots").children, function (b, i) { b.setAttribute("aria-current", i === esc ? "true" : "false"); });
       if (esc === h.es.length - 1 && vistos.indexOf(cur) < 0) { vistos.push(cur); store2.set("refugio-ninos", vistos); marcarPick(); }
@@ -2368,7 +2408,7 @@
         window.speechSynthesis.speak(u);
       })();
     }
-    function terminar() { hablando = false; habla(false); $("kLes").textContent = HIST[cur].les; $("kListen").textContent = etiqueta; }
+    function terminar() { hablando = false; habla(false); $("kLes").textContent = HIST[cur].les; try { $("kCap").textContent = HIST[cur].es[HIST[cur].es.length - 1].tx; } catch (e) {} setTimeout(function () { if (!hablando) salir(); }, 1400); $("kListen").textContent = etiqueta; }
     function escena(token) {
       if (token !== narr) return;
       var h = HIST[cur];
@@ -2384,14 +2424,14 @@
       var h = HIST[cur], n = h.es.length, cierre = k >= n, kt = cierre ? $("kLes") : $("kText"), txt = cierre ? h.les : h.es[k].tx, pre = cierre ? 20 : (k === 0 ? h.t.length + 2 : 0);
       var ws = txt.split(" "), html = "", pos = [], acc = pre;
       ws.forEach(function (w, i) { var sp = document.createElement("span"); sp.className = "w"; sp.textContent = w; html += sp.outerHTML + (i < ws.length - 1 ? " " : ""); pos.push(acc); acc += w.length + 1; });
-      kt.innerHTML = html; var els = kt.querySelectorAll(".w"), last = -1, total = acc;
+      kt.innerHTML = html; var cp = $("kCap"); cp.innerHTML = html; var els = kt.querySelectorAll(".w"), els2 = cp.querySelectorAll(".w"), last = -1, total = acc;
       function paso() {
         if (token !== narr || (!cierre && esc !== k)) return;
         var d = aud.duration;
         if (isFinite(d) && d > 0) {
           var p = Math.min(1, aud.currentTime / (d * 0.96)) * total, idx = -1;
           for (var i = 0; i < pos.length; i++) if (pos[i] <= p) idx = i;
-          if (idx !== last) { if (last > -1) els[last].classList.remove("on"); if (idx > -1) els[idx].classList.add("on"); last = idx; }
+          if (idx !== last) { if (last > -1) { els[last].classList.remove("on"); els2[last].classList.remove("on"); } if (idx > -1) { els[idx].classList.add("on"); els2[idx].classList.add("on"); } last = idx; }
         }
         requestAnimationFrame(paso);
       }
@@ -2420,7 +2460,10 @@
       if (h.au) { narrarAudio(token); return; }
       if (esc === 0) hablar(h.t + ".", token, function () { escena(token); }); else escena(token);
     }
-    $("kListen").addEventListener("click", function () { if (hablando) { parar(); return; } empezar(); });
+    $("kListen").addEventListener("click", function () { if (hablando) { parar(); salir(); return; } entrar(); empezar(); });
+    $("kFs").addEventListener("click", function () { entrar(); });
+    $("kFsClose").addEventListener("click", function () { salir(); });
+    $("kFsListen").addEventListener("click", function () { if (hablando) parar(); else empezar(); });
     window.addEventListener("pagehide", parar);
     abrir(hoy(), false);
   })();
