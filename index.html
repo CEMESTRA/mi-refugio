@@ -2309,7 +2309,7 @@
       $("kShare").href = "https://wa.me/?text=" + encodeURIComponent("📖 Historia bíblica para niños: " + h.t + " (" + h.ref + ")\nCon dibujos, para leer en familia:\nhttps://mirefugioencristo.com/#ninos\n\nMi Refugio · Ganando almas para Cristo");
       var dots = $("kDots"); dots.innerHTML = "";
       h.es.forEach(function (_, n) { var b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-label", "Ir al dibujo " + (n + 1)); b.addEventListener("click", function () { parar(); esc = n; pintar(); }); dots.appendChild(b); });
-      marcarPick(); pintar();
+      marcarPick(); pintar(); ajustarVoz();
       if (desdeUsuario) { var c = $("kBadge"); if (c.scrollIntoView) c.scrollIntoView({ behavior: "smooth", block: "center" }); }
     }
     var pk = $("kPick");
@@ -2343,8 +2343,10 @@
       sl.innerHTML = ""; var o0 = document.createElement("option"); o0.value = ""; o0.textContent = "Automática (la mejor disponible)"; sl.appendChild(o0);
       vs.forEach(function (v) { var o = document.createElement("option"); o.value = v.name; o.textContent = v.name + " · " + v.lang; sl.appendChild(o); });
       sl.value = guardada; if (sl.value !== guardada) sl.value = "";
-      $("kVozBox").hidden = vs.length < 2;
+      ajustarVoz();
     }
+    /* con audio grabado no hace falta elegir voz del dispositivo */
+    function ajustarVoz() { $("kVozBox").hidden = vocesEs().length < 2 || !!HIST[cur].au; }
     function vozActual() { var vs = vocesEs(), n = $("kVoz").value; for (var i = 0; i < vs.length; i++) if (vs[i].name === n) return vs[i]; return vs[0] || null; }
     if (TTS) { poblarVoces(); try { window.speechSynthesis.onvoiceschanged = poblarVoces; } catch (e) {} }
     $("kVoz").addEventListener("change", function () { store2.set("refugio-voz", $("kVoz").value); if (hablando) { var e0 = esc; parar(); esc = e0; empezar(); } });
