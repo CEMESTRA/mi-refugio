@@ -286,7 +286,7 @@
   .an-star { animation-name: ktwinkle; animation-duration: 2.2s; transform-origin: 50% 50%; }
   .an-bigstar { animation-name: kpulse; animation-duration: 2.6s; transform-origin: 50% 50%; }
   .an-wave { animation-name: kwave; animation-duration: 2.8s; transform-origin: 50% 50%; }
-  .an-rain { animation-name: krain; animation-duration: .55s; animation-timing-function: linear; }
+  .an-rain { animation: none; }
   .an-ark, .an-boat { animation-name: krock; animation-duration: 4s; transform-origin: 50% 90%; }
   .an-fish { animation-name: kswim; animation-duration: 4.4s; transform-origin: 50% 50%; }
   .an-dove, .an-raven { animation-name: kfly; animation-duration: 2.6s; transform-origin: 50% 50%; }
@@ -1897,7 +1897,20 @@
       tree: function () { return '<rect x="-5" y="-30" width="10" height="30" fill="#8b5a2b"/><circle cy="-48" r="26" fill="#3f9d57"/><circle cx="-16" cy="-38" r="16" fill="#4caf63"/><circle cx="16" cy="-40" r="16" fill="#4caf63"/>'; },
       palm: function () { return '<path d="M0 0 Q6-35 -2-70" stroke="#8b5a2b" stroke-width="9" fill="none" stroke-linecap="round"/><g fill="#3f9d57"><path d="M-2-70 Q-35-80 -50-62 Q-22-72 -2-70z"/><path d="M-2-70 Q30-82 50-62 Q22-72 -2-70z"/><path d="M-2-70 Q-20-98 -42-96 Q-20-88 -2-70z"/><path d="M-2-70 Q16-98 40-96 Q18-88 -2-70z"/></g>'; },
       wave: function () { return '<path d="M-44 0q11-14 22 0t22 0t22 0t22 0" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".9"/>'; },
-      rain: function () { return '<g stroke="#d7e8ff" stroke-width="2" opacity=".7">' + RAIN + "</g>"; },
+      rain: function () {
+        /* tres capas de gotas alargadas (lejos, medio, cerca) que caen en diagonal sin cortes */
+        var SL = 0.22, capas = [{ H: 70, n: 9, len: 11, w: .7, op: .38, dur: 1.1 }, { H: 90, n: 6, len: 17, w: 1.1, op: .55, dur: .8 }, { H: 120, n: 4, len: 26, w: 1.7, op: .75, dur: .6 }], o = "";
+        capas.forEach(function (c, ci) {
+          var g = "";
+          for (var k = -1; k <= Math.ceil(250 / c.H) + 1; k++) for (var j = 0; j < c.n; j++) {
+            var u = ((j * 0.618 + ci * 0.37 + k * 0.211) % 1), v = ((j * 0.382 + ci * 0.19 + 0.13) % 1);
+            var hx = (j + u * .8) * (500 / c.n) - SL * c.H * k, hy = c.H * k + v * c.H, tx = hx + SL * c.len, ty = hy - c.len;
+            g += '<path d="M' + tx.toFixed(1) + " " + ty.toFixed(1) + "L" + (hx - c.w).toFixed(1) + " " + hy.toFixed(1) + "L" + (hx + c.w).toFixed(1) + " " + hy.toFixed(1) + 'Z"/><circle cx="' + hx.toFixed(1) + '" cy="' + hy.toFixed(1) + '" r="' + (c.w * 1.05).toFixed(2) + '"/>';
+          }
+          o += '<g fill="#e3f0ff" opacity="' + c.op + '">' + g + (RM ? "" : '<animateTransform attributeName="transform" type="translate" from="0 0" to="' + (-SL * c.H) + " " + c.H + '" dur="' + c.dur + 's" repeatCount="indefinite"/>') + "</g>";
+        });
+        return o;
+      },
       ark: function () { return '<path d="M-72 0 L-56 26 H56 L72 0Z" fill="#8b5a2b"/><rect x="-42" y="-30" width="84" height="30" fill="#b9814a"/><polygon points="-52,-30 0,-58 52,-30" fill="#7a4a22"/><circle cx="-20" cy="-14" r="6" fill="#ffe9b0"/><circle cx="0" cy="-14" r="6" fill="#ffe9b0"/><circle cx="20" cy="-14" r="6" fill="#ffe9b0"/>'; },
       boat: function () { return '<path d="M-48 0 L-36 22 H36 L48 0Z" fill="#8b5a2b"/><line x1="0" y1="0" x2="0" y2="-66" stroke="#6d4a2a" stroke-width="4"/><polygon points="4,-62 4,-8 34,-8" fill="#fff"/>'; },
       sheep: function () { return '<g fill="#3b3340"><rect x="-14" y="6" width="5" height="12" rx="2"/><rect x="8" y="6" width="5" height="12" rx="2"/></g><g fill="#fff"><circle cx="-12" cy="-4" r="11"/><circle cx="2" cy="-9" r="13"/><circle cx="14" cy="-3" r="11"/><circle cx="0" cy="3" r="12"/></g><ellipse cx="-19" cy="-6" rx="8" ry="9" fill="#3b3340"/><circle cx="-21" cy="-8" r="1.6" fill="#fff"/>'; },
@@ -1954,6 +1967,7 @@
       if (sc.gr === "water" && sc.bg !== "storm") for (var i = 0; i < 6; i++) { var bx = 40 + i * 62 + (i % 2) * 14; o += '<circle cx="' + bx + '" cy="230" r="' + (2 + (i % 3)) + '" fill="none" stroke="#fff" stroke-width="1.2" opacity="0">' + anim("cy", "232;182", 3.6 + i * .4, i / 6) + anim("opacity", "0;.8;0", 3.6 + i * .4, i / 6) + "</circle>"; }
       if (sc.bg === "night") o += '<g opacity="0"><line x1="0" y1="0" x2="-28" y2="-11" stroke="#fff" stroke-width="2" stroke-linecap="round"/><animateTransform attributeName="transform" type="translate" values="350 18;220 70;220 70" keyTimes="0;.12;1" dur="9s" begin="-1s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0;0" keyTimes="0;.03;.12;1" dur="9s" begin="-1s" repeatCount="indefinite"/></g>';
       if (sc.bg === "dusk" || sc.bg === "dawn" || sc.bg === "night") [[70, 110], [330, 120], [200, 140], [120, 80], [290, 90]].forEach(function (p, i) { o += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="2" fill="#ffe27a" opacity="0">' + anim("opacity", "0;.9;0", 2.6 + i * .3, i / 5) + anim("cy", p[1] + ";" + (p[1] - 10) + ";" + p[1], 2.6 + i * .3, i / 5) + "</circle>"; });
+      if (sc.bg === "storm" && !tormenta) for (var q = 0; q < 12; q++) { var sx = 14 + ((q * 97) % 372), sy = (sc.gr === "water" ? 178 : 196) + ((q * 53) % 52), d = 1.3 + (q % 4) * .25; o += '<ellipse cx="' + sx + '" cy="' + sy + '" rx="1" ry=".4" fill="none" stroke="#e3f0ff" stroke-width="1.1" opacity="0">' + anim("rx", "1;13", d, q / 12) + anim("ry", ".4;3.6", d, q / 12) + anim("opacity", ".85;0", d, q / 12) + "</ellipse>"; }
       if (tormenta) o += '<g opacity="0"><rect width="400" height="240" fill="#fff"/><polygon points="300,0 270,70 292,70 262,140 322,60 298,60 322,0" fill="#fff6a8"/>' + anim("opacity", "0;0;.5;0;.3;0;0", 6, 0, ' keyTimes="0;.78;.8;.83;.85;.89;1"') + "</g>";
       return o;
     }
@@ -1961,7 +1975,7 @@
       var b = BG[sc.bg] || BG.day, s = '<defs><linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + b[0] + '"/><stop offset="1" stop-color="' + b[1] + '"/></linearGradient><linearGradient id="gMulti" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ef5350"/><stop offset=".25" stop-color="#ef5350"/><stop offset=".25" stop-color="#ffca28"/><stop offset=".5" stop-color="#ffca28"/><stop offset=".5" stop-color="#42a5f5"/><stop offset=".75" stop-color="#42a5f5"/><stop offset=".75" stop-color="#66bb6a"/><stop offset="1" stop-color="#66bb6a"/></linearGradient></defs><rect width="400" height="240" fill="url(#gSky)"/>';
       if (sc.bg === "night" || sc.bg === "dusk") s += '<g class="bgstars" fill="#fff" opacity=".8"><circle cx="30" cy="26" r="1.5"/><circle cx="96" cy="50" r="1.2"/><circle cx="170" cy="20" r="1.5"/><circle cx="250" cy="40" r="1.2"/><circle cx="318" cy="22" r="1.6"/><circle cx="380" cy="64" r="1.2"/></g>';
       s += ground(sc.gr) + extras(sc, false);
-      sc.it.forEach(function (t, n) { var f = P[t[0]]; var inner = t[0] === "person" ? f(t[4], t[5], t[6]) : f(t[4]); s += G(t[1], t[2], t[3], inner, t[0], n); });
+      sc.it.filter(function (t) { return t[0] !== "rain"; }).concat(sc.it.filter(function (t) { return t[0] === "rain"; })).forEach(function (t, n) { var f = P[t[0]]; var inner = t[0] === "person" ? f(t[4], t[5], t[6]) : f(t[4]); s += G(t[1], t[2], t[3], inner, t[0], n); });
       if (sc.bg === "storm") s += extras(sc, true);
       return s.replace(/^(<defs>.*?<\/defs>)/, "$1<g class=\"kb\">") + "</g>";
     }
@@ -2189,11 +2203,11 @@
     function habla(v) { var f = document.querySelector(".kfig"); if (f) f.classList.toggle("habla", v); }
     var narr = 0, etiqueta = "🔊 Escuchar y ver la historia", aud = new Audio();
     aud.preload = "auto";
-    function parar() { narr++; try { aud.pause(); aud.onended = aud.onerror = null; } catch (e) {} try { window.speechSynthesis.cancel(); } catch (e) {} hablando = false; habla(false); $("kListen").textContent = etiqueta; }
+    function parar() { narr++; try { aud.pause(); aud.onended = aud.onerror = null; } catch (e) {} try { window.speechSynthesis.cancel(); } catch (e) {} hablando = false; habla(false); try { var hh = HIST[cur]; $("kLes").textContent = hh.les; $("kText").textContent = hh.es[Math.min(esc, hh.es.length - 1)].tx; } catch (e) {} $("kListen").textContent = etiqueta; }
     function pintar() {
       var h = HIST[cur], e = h.es[esc];
       $("kSvg").innerHTML = dibujar(e); $("kSvg").setAttribute("aria-label", "Dibujo " + (esc + 1) + " de " + h.es.length + ": " + h.t);
-      var kt = $("kText"); kt.textContent = e.tx; if (!RM) { kt.classList.remove("nuevo"); void kt.offsetWidth; kt.classList.add("nuevo"); }
+      $("kLes").textContent = h.les; var kt = $("kText"); kt.textContent = e.tx; if (!RM) { kt.classList.remove("nuevo"); void kt.offsetWidth; kt.classList.add("nuevo"); }
       $("kPrev").disabled = esc === 0; $("kNext").disabled = esc === h.es.length - 1;
       Array.prototype.forEach.call($("kDots").children, function (b, i) { b.setAttribute("aria-current", i === esc ? "true" : "false"); });
       if (esc === h.es.length - 1 && vistos.indexOf(cur) < 0) { vistos.push(cur); store2.set("refugio-ninos", vistos); marcarPick(); }
@@ -2264,7 +2278,7 @@
         window.speechSynthesis.speak(u);
       })();
     }
-    function terminar() { hablando = false; habla(false); $("kListen").textContent = etiqueta; }
+    function terminar() { hablando = false; habla(false); $("kLes").textContent = HIST[cur].les; $("kListen").textContent = etiqueta; }
     function escena(token) {
       if (token !== narr) return;
       var h = HIST[cur];
@@ -2277,12 +2291,12 @@
     /* Historias con voz grabada: un audio por dibujo y uno de cierre (audio/<nombre>-N.mp3) */
     /* resalta la palabra que se está diciendo, siguiendo el avance del audio */
     function seguir(token, k) {
-      var h = HIST[cur], kt = $("kText"), txt = h.es[k].tx, pre = k === 0 ? h.t.length + 2 : 0;
+      var h = HIST[cur], n = h.es.length, cierre = k >= n, kt = cierre ? $("kLes") : $("kText"), txt = cierre ? h.les : h.es[k].tx, pre = cierre ? 20 : (k === 0 ? h.t.length + 2 : 0);
       var ws = txt.split(" "), html = "", pos = [], acc = pre;
       ws.forEach(function (w, i) { var sp = document.createElement("span"); sp.className = "w"; sp.textContent = w; html += sp.outerHTML + (i < ws.length - 1 ? " " : ""); pos.push(acc); acc += w.length + 1; });
       kt.innerHTML = html; var els = kt.querySelectorAll(".w"), last = -1, total = acc;
       function paso() {
-        if (token !== narr || esc !== k) return;
+        if (token !== narr || (!cierre && esc !== k)) return;
         var d = aud.duration;
         if (isFinite(d) && d > 0) {
           var p = Math.min(1, aud.currentTime / (d * 0.96)) * total, idx = -1;
@@ -2298,13 +2312,13 @@
       function respaldo(k) { if (token !== narr) return; try { aud.pause(); } catch (e) {} esc = Math.min(k, n - 1); pintar(); if (TTS) escena(token); else terminar(); }
       function clip(k) {
         if (token !== narr) return;
-        if (k < n) { esc = k; pintar(); }
+        if (k < n) { esc = k; pintar(); } else { $("kText").textContent = h.es[n - 1].tx; }
         aud.onended = function () { if (token !== narr) return; if (k < n) setTimeout(function () { clip(k + 1); }, 550); else terminar(); };
         aud.onerror = function () { respaldo(k); };
         aud.src = "audio/" + h.au + "-" + (k + 1) + ".mp3";
         var pr; try { pr = aud.play(); } catch (e) { respaldo(k); return; }
         if (pr && pr.catch) pr.catch(function () { respaldo(k); });
-        if (k < n) seguir(token, k);
+        seguir(token, k);
       }
       clip(esc);
     }
