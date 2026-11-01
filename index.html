@@ -1422,11 +1422,12 @@
   ];
   var VERSIONES = [["NTV","Nueva Traducción Viviente (se lee aquí)"],["RVR1960","Reina-Valera 1960"],["NVI","Nueva Versión Internacional"],["TLA","Traducción en Lenguaje Actual"],["NBLA","Nueva Biblia de las Américas"],["LBLA","La Biblia de las Américas"],["DHH","Dios Habla Hoy"],["RVA-2015","Reina-Valera Actualizada 2015"],["KJV","King James (inglés)"]];
   var sel = $("bLibro");
+  var o0 = document.createElement("option"); o0.value = ""; o0.textContent = "Elige un libro"; sel.appendChild(o0);
   LIBROS.forEach(function (l, i) {
     if (i === 0 || i === 39) { var g = document.createElement("optgroup"); g.label = i === 0 ? "Antiguo Testamento" : "Nuevo Testamento"; sel.appendChild(g); }
     var o = document.createElement("option"); o.value = String(i); o.textContent = l[0]; sel.lastChild.appendChild(o);
   });
-  sel.value = "42"; /* Juan */
+  sel.value = ""; /* en blanco: el usuario elige libro, capítulo y versículos */
   var vbox = $("bVers"), mq = window.matchMedia ? window.matchMedia("(max-width: 700px)") : { matches: false };
   function maxV() { return mq.matches ? 2 : 4; }
   if (mq.addEventListener) mq.addEventListener("change", function () { paintBiblia(); });
@@ -1447,8 +1448,8 @@
     var ok = checked.length > 0 && cap > 0;
     var go = $("bGo"), rd = $("bRead");
     var aqui = checked.filter(function (i) { return AQUI[i.value]; });
-    rd.disabled = !aqui.length;
-    if (!ok) { go.removeAttribute("href"); go.setAttribute("aria-disabled", "true"); $("bInfo").textContent = "Elige un capítulo y al menos una versión."; return; }
+    rd.disabled = !aqui.length || !ok;
+    if (!ok) { go.removeAttribute("href"); go.setAttribute("aria-disabled", "true"); $("bInfo").textContent = sel.value === "" ? "Elige un libro, un capítulo y al menos una versión." : "Elige un capítulo y al menos una versión."; return; }
     var pasaje = libro[1] + " " + cap + (ver ? ":" + ver : "");
     go.href = "https://www.biblegateway.com/passage/?search=" + encodeURIComponent(pasaje) + "&version=" + checked.map(function (i) { return i.value; }).join(";");
     go.removeAttribute("aria-disabled");
@@ -1473,28 +1474,32 @@
     if (keep && prev && el.querySelector('option[value="' + prev + '"]')) el.value = prev;
   }
   function fillCaps(cap) {
-    var n = VCOUNT[Number(sel.value)].length, items = [];
+    var items = [["", "Elige un capítulo"]];
+    if (sel.value === "") { opts($("bCap"), items, false); $("bCap").disabled = true; return; }
+    var n = VCOUNT[Number(sel.value)].length;
     for (var i = 1; i <= n; i++) items.push([i, "Capítulo " + i]);
-    opts($("bCap"), items, false); $("bCap").value = String(Math.min(cap || 1, n));
+    $("bCap").disabled = false; opts($("bCap"), items, false); $("bCap").value = cap ? String(Math.min(cap, n)) : "";
   }
   function fillDesde(d) {
+    if (sel.value === "" || !$("bCap").value) { opts($("bDesde"), [["", "Elige un versículo"]], false); $("bDesde").disabled = true; fillHasta(null); return; }
     var n = VCOUNT[Number(sel.value)][Number($("bCap").value) - 1], items = [["", "Todo el capítulo"]];
     for (var i = 1; i <= n; i++) items.push([i, "Versículo " + i]);
-    opts($("bDesde"), items, false); $("bDesde").value = d && d <= n ? String(d) : "";
+    $("bDesde").disabled = false; opts($("bDesde"), items, false); $("bDesde").value = d && d <= n ? String(d) : "";
     fillHasta(null);
   }
   function fillHasta(h) {
+    if (sel.value === "" || !$("bCap").value) { opts($("bHasta"), [["", "—"]], false); $("bHasta").disabled = true; return; }
     var n = VCOUNT[Number(sel.value)][Number($("bCap").value) - 1], d = parseInt($("bDesde").value, 10), items = [];
     if (!d) { items.push(["", "—"]); opts($("bHasta"), items, false); $("bHasta").disabled = true; return; }
     $("bHasta").disabled = false; items.push([d, "Solo el " + d]);
     for (var i = d + 1; i <= n; i++) items.push([i, "Hasta el " + i]);
     opts($("bHasta"), items, false); $("bHasta").value = h && h >= d && h <= n ? String(h) : String(d);
   }
-  sel.addEventListener("change", function () { fillCaps(1); fillDesde(""); paintBiblia(); });
+  sel.addEventListener("change", function () { fillCaps(null); fillDesde(""); paintBiblia(); });
   $("bCap").addEventListener("change", function () { fillDesde(""); paintBiblia(); });
   $("bDesde").addEventListener("change", function () { fillHasta(null); paintBiblia(); });
   $("bHasta").addEventListener("change", paintBiblia);
-  fillCaps(3); fillDesde(16);
+  fillCaps(null); fillDesde("");
   paintBiblia();
 
 
@@ -1662,6 +1667,7 @@
     });
   }
   function renderReader() {
+    if (sel.value === "" || !$("bCap").value) return;
     var box = $("bReader"), body = $("rBody"), token = ++rToken;
     var idx = Number(sel.value), cap = parseInt($("bCap").value, 10), d = parseInt($("bDesde").value, 10) || 0, h = parseInt($("bHasta").value, 10) || d;
     var ntvOn = !!vbox.querySelector('input[value="NTV"]:checked');
